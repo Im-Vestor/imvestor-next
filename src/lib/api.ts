@@ -91,6 +91,29 @@ export interface RegisterEntrepreneurRequest {
   referralToken?: string;
 }
 
+export interface Area {
+  id: number;
+  name: string;
+}
+
+export interface RegisterInvestorRequest {
+  firstName: string;
+  lastName: string;
+  email: string;
+  password: string;
+  mobileFone: string;
+  fiscalCode: string;
+  city: string;
+  country: string;
+  investmentMinValue: string;
+  investmentMaxValue: string;
+  investmentNetWorth: string;
+  investmentAnnualIncome: string;
+  birthDate: string;
+  areas: number[];
+  referralToken?: string;
+}
+
 export const authApi = {
   login: async (data: LoginRequest) => {
     const response = await api.post<LoginResponse>(
@@ -106,11 +129,25 @@ export const authApi = {
     );
     return response.data;
   },
+  registerInvestor: async (data: RegisterInvestorRequest) => {
+    const response = await api.post<void>(
+      "/authentication/register-investor",
+      data,
+    );
+    return response.data;
+  },
 };
 
 export const skillsApi = {
   getSkillsList: async () => {
     const response = await api.get<Skill[]>("/skill/skills-list");
+    return response.data;
+  },
+};
+
+export const areasApi = {
+  getAreasList: async () => {
+    const response = await api.get<Area[]>("/areas/areas-list");
     return response.data;
   },
 };

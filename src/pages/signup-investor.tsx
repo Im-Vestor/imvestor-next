@@ -1,9 +1,11 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Popover, PopoverTrigger } from "@radix-ui/react-popover";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { format } from "date-fns";
 import { ArrowLeft, CalendarIcon } from "lucide-react";
 import { useRouter } from "next/router";
 import { useForm } from "react-hook-form";
+import { toast } from "sonner";
 import { z } from "zod";
 import { Button } from "~/components/ui/button";
 import { Calendar } from "~/components/ui/calendar";
@@ -19,9 +21,8 @@ import { Input } from "~/components/ui/input";
 import { MultiSelect } from "~/components/ui/multi-select";
 import { PhoneInput } from "~/components/ui/phone-input";
 import { PopoverContent } from "~/components/ui/popover";
+import { authApi, areasApi } from "~/lib/api";
 import { cn } from "~/lib/utils";
-import { api } from "~/utils/api";
-import { AREAS } from "~/utils/types";
 
 const formSchema = z.object({
   firstName: z.string().min(2, "First name must be at least 2 characters"),
@@ -32,15 +33,15 @@ const formSchema = z.object({
   mobileFone: z.string().min(1, "Mobile phone is required"),
   city: z.string().min(1, "City is required"),
   country: z.string().min(1, "Country is required"),
-  investmentMinValue: z.string().transform((val) => parseFloat(val)),
-  investmentMaxValue: z.string().transform((val) => parseFloat(val)),
-  investmentNetWorth: z.string().transform((val) => parseFloat(val)),
-  investmentAnnualIncome: z.string().transform((val) => parseFloat(val)),
+  investmentMinValue: z.string().min(1, "Minimum investment value is required"),
+  investmentMaxValue: z.string().min(1, "Maximum investment value is required"),
+  investmentNetWorth: z.string().min(1, "Net worth is required"),
+  investmentAnnualIncome: z.string().min(1, "Annual income is required"),
   about: z.string().min(1, "About is required"),
   birthDate: z.date({
     required_error: "Birth date is required",
   }),
-  areas: z.array(z.string()).min(1, "At least one area is required"),
+  areas: z.array(z.number()).min(1, "At least one area is required"),
   referralToken: z.string().optional(),
 });
 
@@ -58,37 +59,51 @@ export default function SignupInvestor() {
       mobileFone: "",
       city: "",
       country: "",
-      investmentMinValue: 0,
-      investmentMaxValue: 0,
-      investmentNetWorth: 0,
-      investmentAnnualIncome: 0,
+      investmentMinValue: "",
+      investmentMaxValue: "",
+      investmentNetWorth: "",
+      investmentAnnualIncome: "",
       about: "",
       birthDate: new Date(),
       areas: [],
-      referralToken: "",
+      referralToken: (router.query.referralToken as string) ?? "",
     },
   });
 
-  const { mutate: createInvestor, isPending: isCreating } = api.investor.create.useMutation({
+  const { data: areas } = useQuery({
+    queryKey: ["areas"],
+    queryFn: areasApi.getAreasList,
+  });
+
+  const { mutate: registerInvestor, isPending } = useMutation({
+    mutationFn: (data: z.infer<typeof formSchema>) => {
+      return authApi.registerInvestor({
+        ...data,
+        birthDate: format(data.birthDate, "yyyy-MM-dd"),
+        areas: data.areas ?? [],
+      });
+    },
     onSuccess: () => {
+      toast.success("Account created successfully!");
       void router.push("/login");
     },
-    onError: (error) => {
-      console.error(error);
-      // Handle error appropriately
+    onError: (error: Error) => {
+      toast.error("Failed to create account. Please try again.");
+      console.error("Registration error:", error);
     },
   });
 
   function onSubmit(values: z.infer<typeof formSchema>) {
-    createInvestor({
-      ...values,
-    });
+    console.log(values);
+
+    registerInvestor(values);
   }
 
   return (
     <main className="flex min-h-screen items-center justify-center">
       <div className="my-12 min-w-[40rem] rounded-2xl border-4 border-white/10 bg-[#181920] bg-opacity-30 p-6 backdrop-blur-md">
         <button
+          type="button"
           className="flex items-center gap-2 hover:opacity-75"
           onClick={() => router.back()}
         >
@@ -335,9 +350,16 @@ export default function SignupInvestor() {
                   <FormLabel>Investment Areas</FormLabel>
                   <FormControl>
                     <MultiSelect
-                      options={AREAS}
-                      selected={field.value}
-                      onChange={field.onChange}
+                      options={
+                        areas?.map((area) => ({
+                          label: area.name,
+                          value: area.id.toString(),
+                        })) ?? []
+                      }
+                      selected={field.value.map(String)}
+                      onChange={(values) =>
+                        field.onChange(values.map((v) => Number(v)))
+                      }
                     />
                   </FormControl>
                   <FormMessage />
@@ -345,8 +367,8 @@ export default function SignupInvestor() {
               )}
             />
 
-            <Button type="submit" className="w-full mt-12" disabled={isCreating}>
-              {isCreating ? "Creating account..." : "Create Account"}
+            <Button type="submit" className="w-full mt-12" disabled={isPending}>
+              {isPending ? "Creating account..." : "Create Account"}
             </Button>
           </form>
         </Form>
