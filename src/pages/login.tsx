@@ -53,28 +53,28 @@ export default function Login() {
 
             <form onSubmit={handleSubmit} className="mt-8 space-y-6">
               <div className="space-y-4">
-                  <Input
-                    onChange={(e) => setEmail(e.target.value)}
-                    value={email}
-                    id="email"
-                    name="email"
-                    type="email"
-                    required
-                    placeholder="Email address"
-                    className="bg-[#282B37] p-4 placeholder:text-white"
-                    disabled={isPending}
-                  />
-                  <Input
-                    onChange={(e) => setPassword(e.target.value)}
-                    value={password}
-                    id="password"
-                    name="password"
-                    type="password"
-                    required
-                    placeholder="Password"
-                    className="bg-[#282B37] p-4 placeholder:text-white"
-                    disabled={isPending}
-                  />
+                <Input
+                  onChange={(e) => setEmail(e.target.value)}
+                  value={email}
+                  id="email"
+                  name="email"
+                  type="email"
+                  required
+                  placeholder="Email address"
+                  className="bg-[#282B37] p-4 placeholder:text-white"
+                  disabled={isPending}
+                />
+                <Input
+                  onChange={(e) => setPassword(e.target.value)}
+                  value={password}
+                  id="password"
+                  name="password"
+                  type="password"
+                  required
+                  placeholder="Password"
+                  className="bg-[#282B37] p-4 placeholder:text-white"
+                  disabled={isPending}
+                />
               </div>
 
               <Button type="submit" className="w-full" disabled={isPending}>
@@ -94,7 +94,10 @@ export default function Login() {
               </div>
 
               <div className="mt-6 flex justify-center gap-6">
-                <button className="inline-flex justify-center rounded-full border border-gray-300 bg-white p-3 text-sm font-medium text-gray-500 shadow-sm hover:bg-gray-200">
+                <button
+                  type="button"
+                  className="inline-flex justify-center rounded-full border border-gray-300 bg-white p-3 text-sm font-medium text-gray-500 shadow-sm hover:bg-gray-200"
+                >
                   <Image
                     className="h-4 w-4"
                     src="/images/google.png"
@@ -103,7 +106,10 @@ export default function Login() {
                     height={24}
                   />
                 </button>
-                <button className="inline-flex justify-center rounded-full border border-gray-300 bg-white p-3 text-sm font-medium text-gray-500 shadow-sm hover:bg-gray-200">
+                <button
+                  type="button"
+                  className="inline-flex justify-center rounded-full border border-gray-300 bg-white p-3 text-sm font-medium text-gray-500 shadow-sm hover:bg-gray-200"
+                >
                   <Image
                     className="h-4 w-4"
                     src="/images/apple.png"
@@ -112,7 +118,10 @@ export default function Login() {
                     height={24}
                   />
                 </button>
-                <button className="inline-flex justify-center rounded-full border border-gray-300 bg-white p-3 text-sm font-medium text-gray-500 shadow-sm hover:bg-gray-50">
+                <button
+                  type="button"
+                  className="inline-flex justify-center rounded-full border border-gray-300 bg-white p-3 text-sm font-medium text-gray-500 shadow-sm hover:bg-gray-50"
+                >
                   <Image
                     className="h-4 w-4"
                     src="/images/facebook.png"

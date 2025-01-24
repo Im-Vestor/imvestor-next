@@ -5,7 +5,6 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
 import "~/styles/globals.css";
 import { Toaster } from "~/components/ui/sonner";
-import { colors } from "~/utils/colors";
 
 const roboto = Roboto({
   subsets: ["latin"],
