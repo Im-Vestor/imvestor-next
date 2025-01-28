@@ -2,7 +2,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Popover, PopoverTrigger } from "@radix-ui/react-popover";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { format } from "date-fns";
-import { ArrowLeft, CalendarIcon } from "lucide-react";
+import { ArrowLeft, ArrowRight, CalendarIcon } from "lucide-react";
 import { useRouter } from "next/router";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
@@ -37,7 +37,7 @@ const formSchema = z.object({
   investmentMaxValue: z.string().min(1, "Maximum investment value is required"),
   investmentNetWorth: z.string().min(1, "Net worth is required"),
   investmentAnnualIncome: z.string().min(1, "Annual income is required"),
-  about: z.string().min(1, "About is required"),
+  about: z.string().optional(),
   birthDate: z.date({
     required_error: "Birth date is required",
   }),
@@ -93,15 +93,13 @@ export default function SignupInvestor() {
     },
   });
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
-    console.log(values);
-
-    registerInvestor(values);
-  }
+  const onSubmit = (data: z.infer<typeof formSchema>) => {
+    registerInvestor(data);
+  };
 
   return (
     <main className="flex min-h-screen items-center justify-center">
-      <div className="my-12 min-w-[40rem] rounded-2xl border-4 border-white/10 bg-[#181920] bg-opacity-30 p-6 backdrop-blur-md">
+      <div className="my-12 min-w-[40rem] max-w-[40rem] rounded-2xl border-4 border-white/10 bg-[#181920] bg-opacity-30 p-6 backdrop-blur-md">
         <button
           type="button"
           className="flex items-center gap-2 hover:opacity-75"
@@ -116,11 +114,8 @@ export default function SignupInvestor() {
         </h2>
 
         <Form {...form}>
-          <form
-            onSubmit={form.handleSubmit(onSubmit)}
-            className="mt-8"
-          >
-            <div className="grid grid-cols-2 gap-4 mt-4">
+          <form onSubmit={form.handleSubmit(onSubmit)} className="mt-8">
+            <div className="mt-4 grid grid-cols-2 gap-4">
               <FormField
                 control={form.control}
                 name="firstName"
@@ -210,7 +205,7 @@ export default function SignupInvestor() {
               )}
             />
 
-            <div className="grid grid-cols-2 gap-4 mt-4">
+            <div className="mt-4 grid grid-cols-2 gap-4">
               <FormField
                 control={form.control}
                 name="city"
@@ -240,7 +235,7 @@ export default function SignupInvestor() {
               />
             </div>
 
-            <div className="grid grid-cols-2 gap-4 mt-4">
+            <div className="mt-4 grid grid-cols-2 gap-4">
               <FormField
                 control={form.control}
                 name="investmentMinValue"
@@ -270,7 +265,7 @@ export default function SignupInvestor() {
               />
             </div>
 
-            <div className="grid grid-cols-2 gap-4 mt-4">
+            <div className="mt-4 grid grid-cols-2 gap-4">
               <FormField
                 control={form.control}
                 name="investmentNetWorth"
@@ -367,8 +362,14 @@ export default function SignupInvestor() {
               )}
             />
 
-            <Button type="submit" className="w-full mt-12" disabled={isPending}>
-              {isPending ? "Creating account..." : "Create Account"}
+            <Button type="submit" className="mt-12 w-full" disabled={isPending}>
+              {isPending ? (
+                "Creating account..."
+              ) : (
+                <>
+                  Create Account <ArrowRight className="ml-2" />
+                </>
+              )}
             </Button>
           </form>
         </Form>

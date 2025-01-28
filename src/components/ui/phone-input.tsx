@@ -78,7 +78,7 @@ const CountrySelect = ({
         <Button
           type="button"
           variant="outline"
-          className="flex gap-1 rounded-e-none rounded-s-lg border-r-0 px-3 focus:z-10"
+          className="flex gap-1 text-white rounded-e-none rounded-s-lg border-white/10 border-r-0 px-3 focus:z-10"
           disabled={disabled}
         >
           <FlagComponent
@@ -93,8 +93,8 @@ const CountrySelect = ({
           />
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="w-[300px] p-0 bg-[#181920]">
-        <Command className="bg-[#181920]">
+      <PopoverContent className="w-[300px] p-0 bg-[#181920] text-white border-white/10">
+        <Command className="bg-[#181920] border-white/10">
           <CommandInput placeholder="Search country..." />
           <CommandList>
             <ScrollArea className="h-72">
@@ -147,7 +147,7 @@ const FlagComponent = ({ country, countryName }: RPNInput.FlagProps) => {
   const Flag = flags[country];
 
   return (
-    <span className="flex h-4 w-6 overflow-hidden rounded-sm bg-[#181920]">
+    <span className="flex h-4 w-6 justify-center overflow-hidden rounded-sm">
       {Flag && <Flag title={countryName} />}
     </span>
   );

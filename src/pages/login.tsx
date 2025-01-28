@@ -4,6 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useState } from "react";
+import { toast } from "sonner";
 import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";
 import { authApi } from "~/lib/api";
@@ -17,8 +18,13 @@ export default function Login() {
     mutationFn: authApi.login,
     onSuccess: async (data) => {
       sessionStorage.setItem("accessToken", data.token);
+      sessionStorage.setItem("type", data.userType);
       sessionStorage.setItem("refreshToken", data.refreshToken);
-      await router.push("/dashboard");
+      await router.push("/profile");
+    },
+    onError: (error) => {
+      toast.error("Failed to login. Please try again.");
+      console.error("Login error:", error);
     },
   });
 

@@ -42,7 +42,7 @@ export function MultiSelect({
               value={option.value}
               variant="outline"
               size="lg"
-              className="data-[state=on]:bg-primary data-[state=on]:text-primary-foreground"
+              className="data-[state=on]:bg-[#F0D687] data-[state=on]:text-black"
               onClick={() => handleToggle(option.value)}
             >
               {option.label}
