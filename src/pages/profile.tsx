@@ -23,7 +23,8 @@ import { api } from "~/lib/api";
 
 interface EntrepreneurProfile {
   avatar: string | null;
-  name: string;
+  firstName: string;
+  lastName: string;
   about: string | null;
   city: string | null;
   country: string | null;
@@ -37,7 +38,8 @@ interface EntrepreneurProfile {
 
 interface InvestorProfile {
   reputation: string | null;
-  name: string;
+  firstName: string | null;
+  lastName: string | null;
   about: string | null;
   city: string | null;
   country: string | null;
@@ -311,7 +313,7 @@ export default function Profile() {
       ) : (
         <>
           <div>
-            <h2 className="text-3xl font-semibold">{data.name}</h2>
+            <h2 className="text-3xl font-semibold">{data.firstName + " " + data.lastName}</h2>
             <p className="mt-3 text-lg text-gray-400">
               {data.companyRole ?? "Entrepreneur"}
             </p>
@@ -352,7 +354,7 @@ export default function Profile() {
             <div className="h-24 w-24 rounded-full bg-[#282B37]" />
           )}
           <div>
-            <h2 className="text-2xl font-bold text-[#E5CD82]">{data.name}</h2>
+            <h2 className="text-2xl font-bold text-[#E5CD82]">{data.firstName + " " + data.lastName}</h2>
             <p className="text-gray-400">Investor</p>
           </div>
         </div>
@@ -458,7 +460,7 @@ export default function Profile() {
         </Form>
       ) : (
         <div>
-          <h2 className="text-3xl font-semibold">{data.name}</h2>
+          <h2 className="text-3xl font-semibold">{data.firstName + " " + data.lastName}</h2>
           <p className="mt-3 text-lg text-gray-400">
             {data.companyRole ?? "Entrepreneur"}
           </p>
