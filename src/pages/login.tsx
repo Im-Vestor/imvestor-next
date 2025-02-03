@@ -95,49 +95,6 @@ export default function Login() {
             </form>
 
             <div className="mt-6">
-              <div className="relative flex justify-center text-sm">
-                <span className="px-2 text-gray-500">Or continue with</span>
-              </div>
-
-              <div className="mt-6 flex justify-center gap-6">
-                <button
-                  type="button"
-                  className="inline-flex justify-center rounded-full border border-gray-300 bg-white p-3 text-sm font-medium text-gray-500 shadow-sm hover:bg-gray-200"
-                >
-                  <Image
-                    className="h-4 w-4"
-                    src="/images/google.png"
-                    alt="Google"
-                    width={24}
-                    height={24}
-                  />
-                </button>
-                <button
-                  type="button"
-                  className="inline-flex justify-center rounded-full border border-gray-300 bg-white p-3 text-sm font-medium text-gray-500 shadow-sm hover:bg-gray-200"
-                >
-                  <Image
-                    className="h-4 w-4"
-                    src="/images/apple.png"
-                    alt="Apple"
-                    width={24}
-                    height={24}
-                  />
-                </button>
-                <button
-                  type="button"
-                  className="inline-flex justify-center rounded-full border border-gray-300 bg-white p-3 text-sm font-medium text-gray-500 shadow-sm hover:bg-gray-50"
-                >
-                  <Image
-                    className="h-4 w-4"
-                    src="/images/facebook.png"
-                    alt="Facebook"
-                    width={24}
-                    height={24}
-                  />
-                </button>
-              </div>
-
               <p className="mt-8 text-center text-xs">
                 Don&apos;t have an account?{" "}
                 <Link href="/signup" className="underline hover:opacity-70">

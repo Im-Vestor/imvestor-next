@@ -1,17 +1,14 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useQuery, useMutation } from "@tanstack/react-query";
-import { useEffect, useState } from "react";
-import { useRouter } from "next/router";
+import { useMutation, useQuery } from "@tanstack/react-query";
+import { ArrowRight, MapPin, Pencil } from "lucide-react";
 import Image from "next/image";
+import { useRouter } from "next/router";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
-import { api } from "~/lib/api";
 import { Header } from "~/components/header";
 import { Button } from "~/components/ui/button";
-import { Input } from "~/components/ui/input";
-import { Textarea } from "~/components/ui/textarea";
-import { Pencil } from "lucide-react";
 import {
   Form,
   FormControl,
@@ -20,6 +17,9 @@ import {
   FormLabel,
   FormMessage,
 } from "~/components/ui/form";
+import { Input } from "~/components/ui/input";
+import { Textarea } from "~/components/ui/textarea";
+import { api } from "~/lib/api";
 
 interface EntrepreneurProfile {
   avatar: string | null;
@@ -61,12 +61,10 @@ const entrepreneurFormSchema = z.object({
 });
 
 const investorFormSchema = z.object({
+  firstName: z.string().min(2, "First name must be at least 2 characters"),
+  lastName: z.string().min(2, "Last name must be at least 2 characters"),
   country: z.string().min(1, "Country is required"),
   city: z.string().min(1, "City is required"),
-  mobileFone: z.string().min(1, "Mobile phone is required"),
-  birthDate: z.string().min(1, "Birth date is required"),
-  companyRole: z.string().optional(),
-  companyName: z.string().optional(),
   about: z.string().optional(),
 });
 
@@ -116,12 +114,10 @@ export default function Profile() {
   const investorForm = useForm<z.infer<typeof investorFormSchema>>({
     resolver: zodResolver(investorFormSchema),
     defaultValues: {
+      firstName: profileData?.firstName ?? "",
+      lastName: profileData?.lastName ?? "",
       country: profileData?.country ?? "",
       city: profileData?.city ?? "",
-      mobileFone: "",
-      birthDate: "",
-      companyRole: profileData?.companyRole ?? "",
-      companyName: profileData?.companyName ?? "",
       about: profileData?.about ?? "",
     },
   });
@@ -178,10 +174,6 @@ export default function Profile() {
           ) : (
             <div className="h-24 w-24 rounded-full bg-[#282B37]" />
           )}
-          <div>
-            <h2 className="text-2xl font-bold text-[#E5CD82]">{data.name}</h2>
-            <p className="text-gray-400">Entrepreneur</p>
-          </div>
         </div>
         <Button
           variant="outline"
@@ -199,7 +191,7 @@ export default function Profile() {
             onSubmit={entrepreneurForm.handleSubmit((data) =>
               updateEntrepreneur(data),
             )}
-            className="space-y-4 rounded-lg bg-[#282B37] p-6"
+            className="space-y-4 rounded-lg bg-[#242630] p-6"
           >
             <div className="grid grid-cols-2 gap-4">
               <FormField
@@ -207,13 +199,9 @@ export default function Profile() {
                 name="firstName"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="text-[#E5CD82]">First Name</FormLabel>
+                    <FormLabel>First Name</FormLabel>
                     <FormControl>
-                      <Input
-                        {...field}
-                        className="bg-[#181920] text-white"
-                        disabled={isUpdatingEntrepreneur}
-                      />
+                      <Input {...field} disabled={isUpdatingEntrepreneur} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -225,13 +213,9 @@ export default function Profile() {
                 name="lastName"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="text-[#E5CD82]">Last Name</FormLabel>
+                    <FormLabel>Last Name</FormLabel>
                     <FormControl>
-                      <Input
-                        {...field}
-                        className="bg-[#181920] text-white"
-                        disabled={isUpdatingEntrepreneur}
-                      />
+                      <Input {...field} disabled={isUpdatingEntrepreneur} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -245,13 +229,9 @@ export default function Profile() {
                 name="city"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="text-[#E5CD82]">City</FormLabel>
+                    <FormLabel>City</FormLabel>
                     <FormControl>
-                      <Input
-                        {...field}
-                        className="bg-[#181920] text-white"
-                        disabled={isUpdatingEntrepreneur}
-                      />
+                      <Input {...field} disabled={isUpdatingEntrepreneur} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -263,13 +243,9 @@ export default function Profile() {
                 name="country"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="text-[#E5CD82]">Country</FormLabel>
+                    <FormLabel>Country</FormLabel>
                     <FormControl>
-                      <Input
-                        {...field}
-                        className="bg-[#181920] text-white"
-                        disabled={isUpdatingEntrepreneur}
-                      />
+                      <Input {...field} disabled={isUpdatingEntrepreneur} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -283,13 +259,9 @@ export default function Profile() {
                 name="companyName"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="text-[#E5CD82]">Company</FormLabel>
+                    <FormLabel>Company</FormLabel>
                     <FormControl>
-                      <Input
-                        {...field}
-                        className="bg-[#181920] text-white"
-                        disabled={isUpdatingEntrepreneur}
-                      />
+                      <Input {...field} disabled={isUpdatingEntrepreneur} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -301,13 +273,9 @@ export default function Profile() {
                 name="companyRole"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="text-[#E5CD82]">Role</FormLabel>
+                    <FormLabel>Role</FormLabel>
                     <FormControl>
-                      <Input
-                        {...field}
-                        className="bg-[#181920] text-white"
-                        disabled={isUpdatingEntrepreneur}
-                      />
+                      <Input {...field} disabled={isUpdatingEntrepreneur} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -320,13 +288,9 @@ export default function Profile() {
               name="about"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-[#E5CD82]">About</FormLabel>
+                  <FormLabel>About</FormLabel>
                   <FormControl>
-                    <Textarea
-                      {...field}
-                      className="bg-[#181920] text-white"
-                      disabled={isUpdatingEntrepreneur}
-                    />
+                    <Textarea {...field} disabled={isUpdatingEntrepreneur} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -345,57 +309,29 @@ export default function Profile() {
           </form>
         </Form>
       ) : (
-        <div className="space-y-4 rounded-lg bg-[#282B37] p-6">
+        <>
           <div>
-            <h3 className="text-lg font-semibold text-[#E5CD82]">About</h3>
-            <p className="text-gray-300">
-              {data.about ?? "No description provided"}
+            <h2 className="text-3xl font-semibold">{data.name}</h2>
+            <p className="mt-3 text-lg text-gray-400">
+              {data.companyRole ?? "Entrepreneur"}
             </p>
+            <p className="mt-1 flex items-center gap-1 text-gray-400">
+              <MapPin className="mr-0.5 h-4 w-4" />
+              {data.city && data.country
+                ? `${data.city}, ${data.country}`
+                : "Not specified"}
+            </p>
+            <h3 className="mt-12 font-semibold">About me</h3>
+            <p className="mt-3 text-gray-400">
+              {data.about ?? "No description"}
+            </p>
+            <h3 className="mt-12 font-semibold">Company</h3>
+            <Button className="mt-4 w-1/3">
+              Add your company
+              <ArrowRight className="ml-2" />
+            </Button>
           </div>
-
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <h4 className="font-medium text-[#E5CD82]">Location</h4>
-              <p className="text-gray-300">
-                {data.city && data.country
-                  ? `${data.city}, ${data.country}`
-                  : "Not specified"}
-              </p>
-            </div>
-            <div>
-              <h4 className="font-medium text-[#E5CD82]">Member Since</h4>
-              <p className="text-gray-300">
-                {new Date(data.memberSince).toLocaleDateString()}
-              </p>
-            </div>
-            <div>
-              <h4 className="font-medium text-[#E5CD82]">Company</h4>
-              <p className="text-gray-300">
-                {data.companyName ?? "Not specified"}
-              </p>
-            </div>
-            <div>
-              <h4 className="font-medium text-[#E5CD82]">Role</h4>
-              <p className="text-gray-300">
-                {data.companyRole ?? "Not specified"}
-              </p>
-            </div>
-          </div>
-
-          <div>
-            <h4 className="font-medium text-[#E5CD82]">Skills</h4>
-            <div className="mt-2 flex flex-wrap gap-2">
-              {data.skills.map((skill) => (
-                <span
-                  key={skill}
-                  className="rounded-full bg-[#E5CD82] px-3 py-1 text-sm text-black"
-                >
-                  {skill}
-                </span>
-              ))}
-            </div>
-          </div>
-        </div>
+        </>
       )}
     </div>
   );
@@ -434,21 +370,46 @@ export default function Profile() {
         <Form {...investorForm}>
           <form
             onSubmit={investorForm.handleSubmit((data) => updateInvestor(data))}
-            className="space-y-4 rounded-lg bg-[#282B37] p-6"
+            className="space-y-4 rounded-lg bg-[#242630] p-6"
           >
+            <div className="grid grid-cols-2 gap-4">
+              <FormField
+                control={investorForm.control}
+                name="firstName"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>First Name</FormLabel>
+                    <FormControl>
+                      <Input {...field} disabled={isUpdatingInvestor} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={investorForm.control}
+                name="lastName"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Last Name</FormLabel>
+                    <FormControl>
+                      <Input {...field} disabled={isUpdatingInvestor} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
             <div className="grid grid-cols-2 gap-4">
               <FormField
                 control={investorForm.control}
                 name="city"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="text-[#E5CD82]">City</FormLabel>
+                    <FormLabel>City</FormLabel>
                     <FormControl>
-                      <Input
-                        {...field}
-                        className="bg-[#181920] text-white"
-                        disabled={isUpdatingInvestor}
-                      />
+                      <Input {...field} disabled={isUpdatingInvestor} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -460,107 +421,24 @@ export default function Profile() {
                 name="country"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="text-[#E5CD82]">Country</FormLabel>
+                    <FormLabel>Country</FormLabel>
                     <FormControl>
-                      <Input
-                        {...field}
-                        className="bg-[#181920] text-white"
-                        disabled={isUpdatingInvestor}
-                      />
+                      <Input {...field} disabled={isUpdatingInvestor} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
               />
             </div>
-
-            <div className="grid grid-cols-2 gap-4">
-              <FormField
-                control={investorForm.control}
-                name="companyName"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="text-[#E5CD82]">Company</FormLabel>
-                    <FormControl>
-                      <Input
-                        {...field}
-                        className="bg-[#181920] text-white"
-                        disabled={isUpdatingInvestor}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={investorForm.control}
-                name="companyRole"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="text-[#E5CD82]">Role</FormLabel>
-                    <FormControl>
-                      <Input
-                        {...field}
-                        className="bg-[#181920] text-white"
-                        disabled={isUpdatingInvestor}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </div>
-
-            <FormField
-              control={investorForm.control}
-              name="mobileFone"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel className="text-[#E5CD82]">Mobile Phone</FormLabel>
-                  <FormControl>
-                    <Input
-                      {...field}
-                      className="bg-[#181920] text-white"
-                      disabled={isUpdatingInvestor}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={investorForm.control}
-              name="birthDate"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel className="text-[#E5CD82]">Birth Date</FormLabel>
-                  <FormControl>
-                    <Input
-                      {...field}
-                      type="date"
-                      className="bg-[#181920] text-white"
-                      disabled={isUpdatingInvestor}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
 
             <FormField
               control={investorForm.control}
               name="about"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-[#E5CD82]">About</FormLabel>
+                  <FormLabel>About</FormLabel>
                   <FormControl>
-                    <Textarea
-                      {...field}
-                      className="bg-[#181920] text-white"
-                      disabled={isUpdatingInvestor}
-                    />
+                    <Textarea {...field} disabled={isUpdatingInvestor} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -579,68 +457,24 @@ export default function Profile() {
           </form>
         </Form>
       ) : (
-        <div className="space-y-4 rounded-lg bg-[#282B37] p-6">
-          <div>
-            <h3 className="text-lg font-semibold text-[#E5CD82]">About</h3>
-            <p className="text-gray-300">
-              {data.about ?? "No description provided"}
-            </p>
-          </div>
-
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <h4 className="font-medium text-[#E5CD82]">Location</h4>
-              <p className="text-gray-300">
-                {data.city && data.country
-                  ? `${data.city}, ${data.country}`
-                  : "Not specified"}
-              </p>
-            </div>
-            <div>
-              <h4 className="font-medium text-[#E5CD82]">Member Since</h4>
-              <p className="text-gray-300">
-                {new Date(data.memberSince).toLocaleDateString()}
-              </p>
-            </div>
-            <div>
-              <h4 className="font-medium text-[#E5CD82]">Company</h4>
-              <p className="text-gray-300">
-                {data.companyName ?? "Not specified"}
-              </p>
-            </div>
-            <div>
-              <h4 className="font-medium text-[#E5CD82]">Role</h4>
-              <p className="text-gray-300">
-                {data.companyRole ?? "Not specified"}
-              </p>
-            </div>
-            <div>
-              <h4 className="font-medium text-[#E5CD82]">Net Worth</h4>
-              <p className="text-gray-300">${data.netWorth}</p>
-            </div>
-            <div>
-              <h4 className="font-medium text-[#E5CD82]">
-                Investment Objective
-              </h4>
-              <p className="text-gray-300">
-                {data.investmentObjective ?? "Not specified"}
-              </p>
-            </div>
-          </div>
-
-          <div>
-            <h4 className="font-medium text-[#E5CD82]">Investment Areas</h4>
-            <div className="mt-2 flex flex-wrap gap-2">
-              {data.areas?.map((area) => (
-                <span
-                  key={`area-${area}`}
-                  className="rounded-full bg-[#E5CD82] px-3 py-1 text-sm text-black"
-                >
-                  Area {area}
-                </span>
-              ))}
-            </div>
-          </div>
+        <div>
+          <h2 className="text-3xl font-semibold">{data.name}</h2>
+          <p className="mt-3 text-lg text-gray-400">
+            {data.companyRole ?? "Entrepreneur"}
+          </p>
+          <p className="mt-1 flex items-center gap-1 text-gray-400">
+            <MapPin className="mr-0.5 h-4 w-4" />
+            {data.city && data.country
+              ? `${data.city}, ${data.country}`
+              : "Not specified"}
+          </p>
+          <h3 className="mt-12 font-semibold">About me</h3>
+          <p className="mt-3 text-gray-400">{data.about ?? "No description"}</p>
+          <h3 className="mt-12 font-semibold">Portfolio</h3>
+          <Button className="mt-4 w-1/3">
+            Add your company
+            <ArrowRight className="ml-2" />
+          </Button>
         </div>
       )}
     </div>
@@ -649,10 +483,12 @@ export default function Profile() {
   return (
     <main className="mx-auto min-h-screen max-w-4xl p-8">
       <Header />
-      {profileData &&
-        (userType === "ENTREPRENEUR"
-          ? renderEntrepreneurProfile(profileData as EntrepreneurProfile)
-          : renderInvestorProfile(profileData as InvestorProfile))}
+      <div className="mt-12">
+        {profileData &&
+          (userType === "ENTREPRENEUR"
+            ? renderEntrepreneurProfile(profileData as EntrepreneurProfile)
+            : renderInvestorProfile(profileData as InvestorProfile))}
+      </div>
     </main>
   );
 }

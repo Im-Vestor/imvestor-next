@@ -16,7 +16,7 @@ export const Header = () => {
           height={24}
           className="rounded-full"
         />
-        <h1 className="text-xl font-bold text-white">Imvestor</h1>
+        <h1 className="text-xl font-bold text-white">Im-Vestor</h1>
       </div>
       <Button
         onClick={async () => {
