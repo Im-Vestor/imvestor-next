@@ -20,7 +20,6 @@ import {
 import { Input } from "~/components/ui/input";
 import { Textarea } from "~/components/ui/textarea";
 import { api } from "~/lib/api";
-import { CreateCompanyForm } from "~/components/ui/create-company-form";
 
 interface EntrepreneurProfile {
   avatar: string | null;
