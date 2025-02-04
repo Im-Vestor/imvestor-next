@@ -20,6 +20,7 @@ import {
 import { Input } from "~/components/ui/input";
 import { Textarea } from "~/components/ui/textarea";
 import { api } from "~/lib/api";
+import { CreateCompanyForm } from "~/components/ui/create-company-form";
 
 interface EntrepreneurProfile {
   avatar: string | null;
@@ -328,8 +329,11 @@ export default function Profile() {
               {data.about ?? "No description"}
             </p>
             <h3 className="mt-12 font-semibold">Company</h3>
-            <Button className="mt-4 w-1/3">
-              Add your company
+            <Button 
+              className="mt-4 w-1/3"
+              onClick={() => router.push("/create-company")}
+            >
+              Add your Company
               <ArrowRight className="ml-2" />
             </Button>
           </div>
@@ -353,10 +357,6 @@ export default function Profile() {
           ) : (
             <div className="h-24 w-24 rounded-full bg-[#282B37]" />
           )}
-          <div>
-            <h2 className="text-2xl font-bold text-[#E5CD82]">{data.firstName + " " + data.lastName}</h2>
-            <p className="text-gray-400">Investor</p>
-          </div>
         </div>
         <Button
           variant="outline"
@@ -473,10 +473,7 @@ export default function Profile() {
           <h3 className="mt-12 font-semibold">About me</h3>
           <p className="mt-3 text-gray-400">{data.about ?? "No description"}</p>
           <h3 className="mt-12 font-semibold">Portfolio</h3>
-          <Button className="mt-4 w-1/3">
-            Add your company
-            <ArrowRight className="ml-2" />
-          </Button>
+          <p>TODO</p>
         </div>
       )}
     </div>

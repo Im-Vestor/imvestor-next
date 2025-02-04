@@ -14,7 +14,6 @@ export const Header = () => {
           alt="Imvestor"
           width={24}
           height={24}
-          className="rounded-full"
         />
         <h1 className="text-xl font-bold text-white">Im-Vestor</h1>
       </div>

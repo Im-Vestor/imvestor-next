@@ -23,7 +23,7 @@ const MyApp: AppType = ({ Component, pageProps }) => {
         <meta name="description" content="Imvestor" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <div className={`${roboto.className} ${roboto.variable} bg-[#20222D] text-white`}>
+      <div className={`${roboto.className} ${roboto.variable} bg-gradient-to-b from-[#20212B] to-[#252935] text-white`}>
         <Component {...pageProps} />
         <Toaster />
       </div>

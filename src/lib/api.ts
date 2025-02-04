@@ -29,18 +29,21 @@ api.interceptors.response.use(
 
     if (
       error.response?.status === 401 &&
-      originalRequest 
-    //   !(originalRequest as any)._retry
+      originalRequest
+      //   !(originalRequest as any)._retry
     ) {
-    //   originalRequest._retry = true;
+      //   originalRequest._retry = true;
 
       try {
         const refreshToken = sessionStorage.getItem("refreshToken");
-        const response = await axios.get<RefreshResponse>(`${BASE_URL}/auth/refresh`, {
-          headers: {
-            Authorization: `Bearer ${refreshToken}`,
+        const response = await axios.get<RefreshResponse>(
+          `${BASE_URL}/auth/refresh`,
+          {
+            headers: {
+              Authorization: `Bearer ${refreshToken}`,
+            },
           },
-        });
+        );
 
         const { token: newAccessToken } = response.data;
         sessionStorage.setItem("accessToken", newAccessToken);
@@ -96,6 +99,14 @@ export interface Area {
   name: string;
 }
 
+export interface ReferralDetails {
+  referralCode: string;
+  total: number;
+  references: Array<{
+    name: string;
+  }>;
+}
+
 export interface RegisterInvestorRequest {
   firstName: string;
   lastName: string;
@@ -112,6 +123,35 @@ export interface RegisterInvestorRequest {
   birthDate: string;
   areas: number[];
   referralToken?: string;
+}
+
+interface EntrepreneurProfile {
+  avatar: string | null;
+  name: string | null;
+  about: string | null;
+  city: string | null;
+  country: string | null;
+  companyRole: string | null;
+  companyName: string | null;
+  memberSince: string;
+  focusSector: string;
+  skills: string[];
+  totalInvestors: number;
+}
+
+interface InvestorProfile {
+  reputation: string | null;
+  name: string | null;
+  about: string | null;
+  city: string | null;
+  country: string | null;
+  companyRole: string | null;
+  companyName: string | null;
+  memberSince: string;
+  netWorth: string;
+  investmentObjective: string | null;
+  avatar: string | null;
+  areas: number[];
 }
 
 export const authApi = {
@@ -136,6 +176,20 @@ export const authApi = {
     );
     return response.data;
   },
+  getUserProfile: async (type: string) => {
+    const endpoint = type === "ENTREPRENEUR" ? "/entrepreneur" : "/investor";
+    const response = await api.get<EntrepreneurProfile | InvestorProfile>(
+      endpoint,
+    );
+    return response.data;
+  },
+};
+
+export const referralApi = {
+  getReferralList: async (email: string) => {
+    const response = await api.get<ReferralDetails>(`/referral/${email}`);
+    return response.data;
+  },
 };
 
 export const skillsApi = {
@@ -148,6 +202,49 @@ export const skillsApi = {
 export const areasApi = {
   getAreasList: async () => {
     const response = await api.get<Area[]>("/areas/areas-list");
+    return response.data;
+  },
+};
+
+interface ProjectResponse {
+  id: number;
+  name: string;
+  quickSolution: string;
+  website?: string;
+  foundationDate: string;
+  companySector: string;
+  companyStage: string;
+  country: string;
+  city: string;
+  about: string;
+  startInvestment: string;
+  investorsSlots: number;
+  annualRevenue: string;
+  investmentGoal: string;
+  equity: string | undefined
+  companyFaq: {
+    question: string;
+    answer: string;
+  }[]
+}
+
+type ProjectRequest = Omit<ProjectResponse, 'id'>
+
+interface UploadFileRequest {
+  idProject: number;
+  name: string;
+  type: string;
+  size: string;
+  base64: string;
+}
+
+export const projectApi = {
+  createProject: async (data: ProjectRequest) => {
+    const response = await api.post<ProjectResponse>("/project", data);
+    return response.data;
+  },
+  uploadFile: async (data: UploadFileRequest) => {
+    const response = await api.post<void>("/project/upload-file", data);
     return response.data;
   },
 };

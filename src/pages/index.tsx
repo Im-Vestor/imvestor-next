@@ -16,12 +16,16 @@ import Link from "next/link";
 import router from "next/router";
 import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";
+import { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 
 export default function Home() {
+  const [isVideoPlaying, setIsVideoPlaying] = useState(false);
+
   return (
     <>
       <main className="mb-8 min-h-screen">
-        <div className="absolute -top-[480px] left-1/2 h-[500px] md:w-[800px] w-[300px] -translate-x-1/2 rounded-md bg-[#E5CD82]/20 blur-3xl" />
+        <div className="absolute -top-[480px] left-1/2 h-[500px] w-[300px] -translate-x-1/2 rounded-md bg-[#E5CD82]/20 blur-3xl md:w-[800px]" />
         <header className="m-6 flex justify-end gap-2">
           <Button
             size="icon"
@@ -45,7 +49,7 @@ export default function Home() {
             height={64}
           />
           <h3 className="mt-2 text-2xl font-medium">Im-Vestor</h3>
-          <h1 className="mt-8 bg-gradient-to-r from-[#BFBFC2] via-[#FDFDFD] to-[#BFBFC2] bg-clip-text md:text-7xl text-5xl font-medium tracking-wide text-transparent">
+          <h1 className="mt-8 bg-gradient-to-r from-[#BFBFC2] via-[#FDFDFD] to-[#BFBFC2] bg-clip-text text-5xl font-medium tracking-wide text-transparent md:text-7xl">
             We mean Business!
           </h1>
           <h1 className="mt-4 bg-gradient-to-r from-[#BFBFC2] via-[#FDFDFD] to-[#BFBFC2] bg-clip-text text-3xl font-medium text-transparent">
@@ -58,16 +62,45 @@ export default function Home() {
             Get Started <ArrowDownRight />
           </Button>
           <hr className="mt-24 h-0.5 w-full max-w-4xl rounded-full bg-neutral-100 opacity-5" />
-          <div className="relative mt-24">
-            <div className="absolute left-1/2 top-1/2 h-64 w-64 -translate-x-1/2 -translate-y-1/2 rounded-full bg-white/20 blur-3xl" />
-            <Image
-              src="/images/home-video.png"
-              className="relative"
-              alt="Imvestor"
-              width={240}
-              height={240}
-            />
+          <div className="mt-24">
+            <AnimatePresence>
+              {!isVideoPlaying && (
+                <div className="relative">
+                  <div className="absolute left-1/2 top-1/2 h-64 w-64 -translate-x-1/2 -translate-y-1/2 rounded-full bg-white/20 blur-3xl" />
+                  <Image
+                    src="/images/home-video.png"
+                    className="relative cursor-pointer rounded-full transition-transform hover:scale-105"
+                    alt="Imvestor"
+                    width={240}
+                    height={240}
+                    onClick={() => setIsVideoPlaying(true)}
+                  />
+                </div>
+              )}
+            </AnimatePresence>
+            <AnimatePresence>
+              {isVideoPlaying && (
+                <motion.div
+                  initial={{ opacity: 0, scale: 0 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, scale: 0 }}
+                  transition={{ duration: 0.3 }}
+                  className="relative w-full max-w-2xl"
+                >
+                  <video
+                    className="w-full rounded-lg"
+                    autoPlay
+                    controls
+                    onClick={(e) => e.stopPropagation()}
+                  >
+                    <source src="/videos/investor.mp4" type="video/mp4" />
+                    Your browser does not support the video tag.
+                  </video>
+                </motion.div>
+              )}
+            </AnimatePresence>
           </div>
+
           <h1 className="mt-24 bg-gradient-to-r from-[#BFBFC2] via-[#FDFDFD] to-[#BFBFC2] bg-clip-text text-6xl font-medium tracking-wide text-transparent">
             Why choose{" "}
             <span className="bg-gradient-to-r from-[#E5CD82] via-[#C2AE72] to-[#978760] bg-clip-text">
@@ -167,8 +200,8 @@ export default function Home() {
             </div>
           </div>
 
-          <div className="relative w-full min-h-[1000px]">
-            <div className="absolute inset-0 bg-gradient-to-b from-[#21232E] via-transparent to-[#21232E] z-[-19]" />
+          <div className="relative min-h-[1000px] w-full">
+            <div className="absolute inset-0 z-[-19] bg-gradient-to-b from-[#21232E] via-transparent to-[#21232E]" />
             <Image
               src="/images/bg-stars.png"
               alt="Stars Background"

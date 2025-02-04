@@ -18,8 +18,8 @@ export default function Login() {
     mutationFn: authApi.login,
     onSuccess: async (data) => {
       sessionStorage.setItem("accessToken", data.token);
-      sessionStorage.setItem("type", data.userType);
       sessionStorage.setItem("refreshToken", data.refreshToken);
+      sessionStorage.setItem("type", data.userType);
       await router.push("/profile");
     },
     onError: (error) => {
