@@ -93,7 +93,10 @@ export default function Home() {
                     controls
                     onClick={(e) => e.stopPropagation()}
                   >
-                    <source src="https://r1pf0du9n17u37qf.public.blob.vercel-storage.com/Investor-LfT3nXCTFM9WBb33OA3Oyq4qfGQlto.mp4" type="video/mp4" />
+                    <source
+                      src="https://r1pf0du9n17u37qf.public.blob.vercel-storage.com/Investor-LfT3nXCTFM9WBb33OA3Oyq4qfGQlto.mp4"
+                      type="video/mp4"
+                    />
                     Your browser does not support the video tag.
                   </video>
                 </motion.div>
@@ -110,9 +113,9 @@ export default function Home() {
           <div className="mt-8 p-6">
             <div className="mx-auto mb-6 grid max-w-4xl grid-cols-1 gap-4 text-center md:grid-cols-3 md:grid-rows-3 md:text-start">
               <div className="col-span-1 rounded-2xl border-2 border-white/10 bg-[#2D2F3D] bg-opacity-30 p-6 backdrop-blur-md md:col-span-2">
-                <div className="flex flex-col">
-                  <Compass className="mx-auto h-8 w-8 text-[#E5CD82] md:mx-0" />
-                  <h2 className="mt-4 text-xl font-semibold text-[#E5CD82]">
+                <div className="flex flex-col items-center text-center">
+                  <Compass className="mx-auto h-12 w-12 text-[#E5CD82] md:mx-0" />
+                  <h2 className="mt-4 text-2xl font-semibold text-[#E5CD82]">
                     Navigate your journey with Confidence
                   </h2>
                   <p className="mt-2 hidden text-gray-300 md:block">
@@ -127,9 +130,9 @@ export default function Home() {
                 </div>
               </div>
               <div className="col-span-1 rounded-2xl border-2 border-white/10 bg-[#2D2F3D] bg-opacity-30 p-6 backdrop-blur-md">
-                <div className="flex flex-col">
-                  <Handshake className="mx-auto h-8 w-8 text-[#E5CD82] md:mx-0" />
-                  <h2 className="mt-4 text-xl font-semibold text-[#E5CD82]">
+                <div className="flex flex-col items-center text-center">
+                  <Handshake className="mx-auto h-12 w-12 text-[#E5CD82] md:mx-0" />
+                  <h2 className="mt-4 text-2xl font-semibold text-[#E5CD82]">
                     Smart Matching
                   </h2>
                   <p className="mt-2 text-gray-300">
@@ -140,16 +143,16 @@ export default function Home() {
               </div>
 
               <div className="row-span-1 rounded-2xl border-2 border-white/10 bg-[#2D2F3D] bg-opacity-30 p-6 backdrop-blur-md md:row-span-2">
-                <div className="flex flex-col">
-                  <Briefcase className="mx-auto h-8 w-8 text-[#E5CD82] md:mx-0" />
-                  <h2 className="mt-4 text-xl font-semibold text-[#E5CD82]">
+                <div className="flex flex-col items-center text-center justify-center h-full">
+                  <Briefcase className="mx-auto h-12 w-12 text-[#E5CD82] md:mx-0" />
+                  <h2 className="mt-4 text-2xl font-semibold text-[#E5CD82]">
                     Seamless Negotiations
                   </h2>
                   <p className="mt-2 hidden text-gray-300 md:block">
                     Investors and entrepreneurs can communicate directly through
                     the platform, schedule meetings, and negotiate terms openly.
-                    Both parties stay informed, building trust and
-                    collaboration.
+                    Both parties stay informed, building trust and collaboration
+                    in order to make a deal and a long term partnership.
                   </p>
                   <p className="mt-2 block text-gray-300 md:hidden">
                     Investors and entrepreneurs can communicate directly through
@@ -168,9 +171,9 @@ export default function Home() {
               </div>
 
               <div className="rounded-2xl border-2 border-white/10 bg-[#2D2F3D] bg-opacity-30 p-6 backdrop-blur-md">
-                <div className="flex flex-col">
-                  <Zap className="mx-auto h-8 w-8 text-[#E5CD82] md:mx-0" />
-                  <h2 className="mt-4 text-xl font-semibold text-[#E5CD82]">
+                <div className="flex flex-col items-center text-center">
+                  <Zap className="mx-auto h-12 w-12 text-[#E5CD82] md:mx-0" />
+                  <h2 className="mt-4 text-2xl font-semibold text-[#E5CD82]">
                     Poke, Boost and Hyper Train
                   </h2>
                   <p className="mt-2 text-gray-300">
@@ -181,9 +184,9 @@ export default function Home() {
               </div>
 
               <div className="col-span-1 rounded-2xl border-2 border-white/10 bg-[#2D2F3D] bg-opacity-30 p-6 backdrop-blur-md md:col-span-2">
-                <div className="flex flex-col">
-                  <ShieldCheck className="mx-auto h-8 w-8 text-[#E5CD82] md:mx-0" />
-                  <h2 className="mt-4 text-xl font-semibold text-[#E5CD82]">
+                <div className="flex flex-col items-center text-center">
+                  <ShieldCheck className="mx-auto h-12 w-12 text-[#E5CD82] md:mx-0" />
+                  <h2 className="mt-4 text-2xl font-semibold text-[#E5CD82]">
                     Your Investments, Protected
                   </h2>
                   <p className="mt-2 hidden text-gray-300 md:block">
@@ -212,15 +215,11 @@ export default function Home() {
             <div className="relative z-10 mb-48">
               <h1 className="mx-4 mt-48 bg-gradient-to-r from-[#BFBFC2] via-[#FDFDFD] to-[#BFBFC2] bg-clip-text text-5xl font-medium tracking-wide md:mx-0">
                 Be part of the new Business{" "}
-                <span className="text-[#EFD687]">
-                  Revolution
-                </span>
+                <span className="text-[#EFD687]">Revolution</span>
               </h1>
               <h3 className="mt-4 bg-gradient-to-r from-[#BFBFC2] via-[#FDFDFD] to-[#BFBFC2] bg-clip-text text-2xl font-medium tracking-wide">
-                <span className="text-[#EFD687]">
-                  Select your path
-                </span>{" "}
-                and start your journey today!
+                <span className="text-[#EFD687]">Select your path</span> and
+                start your journey today!
               </h3>
               <div className="mt-8 p-6">
                 <div className="mx-auto flex max-w-4xl flex-col justify-center gap-4 md:flex-row">
@@ -231,7 +230,7 @@ export default function Home() {
                       width={64}
                       height={180}
                     />
-                    <h2 className="mt-4 text-[#EFD687] text-xl font-semibold">
+                    <h2 className="mt-4 text-xl font-semibold text-[#EFD687]">
                       ENTREPRENEUR
                     </h2>
                     <p className="mt-2 max-w-xs text-center text-gray-300">
@@ -248,7 +247,7 @@ export default function Home() {
                       height={180}
                       className="mt-6"
                     />
-                    <h2 className="mt-4 text-[#EFD687] text-xl font-semibold">
+                    <h2 className="mt-4 text-xl font-semibold text-[#EFD687]">
                       INVESTOR
                     </h2>
                     <p className="mt-2 max-w-xs text-center text-gray-300">
