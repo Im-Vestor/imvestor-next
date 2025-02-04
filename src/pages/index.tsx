@@ -24,7 +24,7 @@ export default function Home() {
 
   return (
     <>
-      <main className="mb-8 min-h-screen">
+      <main className="min-h-screen">
         <div className="absolute -top-[480px] left-1/2 h-[500px] w-[300px] -translate-x-1/2 rounded-md bg-[#E5CD82]/20 blur-3xl md:w-[800px]" />
         <header className="m-6 flex justify-end gap-2">
           <Button
@@ -200,62 +200,55 @@ export default function Home() {
             </div>
           </div>
 
-          <div className="relative min-h-[1000px] w-full">
-            <div className="absolute inset-0 z-[-19] bg-gradient-to-b from-[#21232E] via-transparent to-[#21232E]" />
-            <Image
-              src="/images/bg-stars.png"
-              alt="Stars Background"
-              fill
-              priority
-              unoptimized
-              className="-z-20 object-cover"
-            />
-            <h1 className="mx-4 mt-48 bg-gradient-to-r from-[#BFBFC2] via-[#FDFDFD] to-[#BFBFC2] bg-clip-text text-5xl font-medium tracking-wide text-transparent md:mx-0">
-              Be part of the new Business{" "}
-              <span className="bg-gradient-to-r from-[#E5CD82] via-[#C2AE72] to-[#978760] bg-clip-text">
-                Revolution
-              </span>
-            </h1>
-            <h3 className="mt-4 bg-gradient-to-r from-[#BFBFC2] via-[#FDFDFD] to-[#BFBFC2] bg-clip-text text-2xl font-medium tracking-wide text-transparent">
-              <span className="bg-gradient-to-r from-[#E5CD82] via-[#C2AE72] to-[#978760] bg-clip-text">
-                Select your path
-              </span>{" "}
-              and start your journey today!
-            </h3>
-            <div className="mt-8 p-6">
-              <div className="mx-auto flex max-w-4xl flex-col justify-center gap-4 md:flex-row">
-                <div className="flex flex-col items-center rounded-2xl border-2 border-white/10 bg-[#2D2F3D] bg-opacity-30 px-6 py-16 backdrop-blur-sm">
-                  <Image
-                    src={"/images/astronaut.png"}
-                    alt="Imvestor"
-                    width={64}
-                    height={180}
-                  />
-                  <h2 className="mt-4 bg-gradient-to-r from-[#E5CD82] via-[#C2AE72] to-[#978760] bg-clip-text text-xl font-semibold text-transparent">
-                    ENTREPRENEUR
-                  </h2>
-                  <p className="mt-2 max-w-xs text-center text-gray-300">
-                    Secure funding from investors, and top VCs and accelerate
-                    your business growth. Whether you&apos;re a startup or a
-                    business incubator, we&apos;ve got you covered
-                  </p>
-                </div>
-                <div className="flex flex-col items-center rounded-2xl border-2 border-white/10 bg-[#2D2F3D] bg-opacity-30 px-6 py-16 backdrop-blur-sm">
-                  <Image
-                    src={"/images/rocket.png"}
-                    alt="Imvestor"
-                    width={82}
-                    height={180}
-                    className="mt-6"
-                  />
-                  <h2 className="mt-4 bg-gradient-to-r from-[#E5CD82] via-[#C2AE72] to-[#978760] bg-clip-text text-xl font-semibold text-transparent">
-                    INVESTOR
-                  </h2>
-                  <p className="mt-2 max-w-xs text-center text-gray-300">
-                    Unlock exclusive access to high-quality startups, streamline
-                    your deal flow, and keep a close watch on the latest
-                    emerging companies.
-                  </p>
+          <div className="w-full">
+            <div className="z-10">
+              <h1 className="mx-4 mt-48 bg-gradient-to-r from-[#BFBFC2] via-[#FDFDFD] to-[#BFBFC2] bg-clip-text text-5xl font-medium tracking-wide md:mx-0">
+                Be part of the new Business{" "}
+                <span className="bg-gradient-to-r from-[#E5CD82] via-[#C2AE72] to-[#978760] bg-clip-text">
+                  Revolution
+                </span>
+              </h1>
+              <h3 className="mt-4 bg-gradient-to-r from-[#BFBFC2] via-[#FDFDFD] to-[#BFBFC2] bg-clip-text text-2xl font-medium tracking-wide">
+                <span className="bg-gradient-to-r from-[#E5CD82] via-[#C2AE72] to-[#978760] bg-clip-text">
+                  Select your path
+                </span>{" "}
+                and start your journey today!
+              </h3>
+              <div className="mt-8 p-6">
+                <div className="mx-auto flex max-w-4xl flex-col justify-center gap-4 md:flex-row">
+                  <div className="flex flex-col items-center rounded-2xl border-2 border-white/10 bg-[#2D2F3D] bg-opacity-30 px-6 py-16 backdrop-blur-sm">
+                    <Image
+                      src={"/images/astronaut.png"}
+                      alt="Imvestor"
+                      width={64}
+                      height={180}
+                    />
+                    <h2 className="mt-4 bg-gradient-to-r from-[#E5CD82] via-[#C2AE72] to-[#978760] bg-clip-text text-xl font-semibold">
+                      ENTREPRENEUR
+                    </h2>
+                    <p className="mt-2 max-w-xs text-center text-gray-300">
+                      Secure funding from investors, and top VCs and accelerate
+                      your business growth. Whether you&apos;re a startup or a
+                      business incubator, we&apos;ve got you covered
+                    </p>
+                  </div>
+                  <div className="flex flex-col items-center rounded-2xl border-2 border-white/10 bg-[#2D2F3D] bg-opacity-30 px-6 py-16 backdrop-blur-sm">
+                    <Image
+                      src={"/images/rocket.png"}
+                      alt="Imvestor"
+                      width={82}
+                      height={180}
+                      className="mt-6"
+                    />
+                    <h2 className="mt-4 bg-gradient-to-r from-[#E5CD82] via-[#C2AE72] to-[#978760] bg-clip-text text-xl font-semibold">
+                      INVESTOR
+                    </h2>
+                    <p className="mt-2 max-w-xs text-center text-gray-300">
+                      Unlock exclusive access to high-quality startups,
+                      streamline your deal flow, and keep a close watch on the
+                      latest emerging companies.
+                    </p>
+                  </div>
                 </div>
               </div>
             </div>
@@ -330,7 +323,7 @@ export default function Home() {
             </div>
           </div>
 
-          <footer className="mx-auto mt-32 w-full max-w-7xl px-12">
+          <footer className="mx-auto mb-16 mt-32 w-full max-w-7xl px-12">
             <hr className="h-0.5 w-full bg-neutral-100 opacity-10" />
             <div className="my-8 flex w-full flex-col items-center gap-6 text-gray-500 md:flex-row">
               <p>Follow us</p>
