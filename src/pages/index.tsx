@@ -24,7 +24,7 @@ export default function Home() {
 
   return (
     <>
-      <main className="min-h-screen">
+      <main className="min-h-screen bg-[#20222D]">
         <div className="absolute -top-[480px] left-1/2 h-[500px] w-[300px] -translate-x-1/2 rounded-md bg-[#E5CD82]/20 blur-3xl md:w-[800px]" />
         <header className="m-6 flex justify-end gap-2">
           <Button
@@ -93,7 +93,7 @@ export default function Home() {
                     controls
                     onClick={(e) => e.stopPropagation()}
                   >
-                    <source src="/videos/investor.mp4" type="video/mp4" />
+                    <source src="https://r1pf0du9n17u37qf.public.blob.vercel-storage.com/Investor-LfT3nXCTFM9WBb33OA3Oyq4qfGQlto.mp4" type="video/mp4" />
                     Your browser does not support the video tag.
                   </video>
                 </motion.div>
@@ -200,30 +200,38 @@ export default function Home() {
             </div>
           </div>
 
-          <div className="w-full">
-            <div className="z-10">
+          <div className="relative w-full">
+            <Image
+              src="/images/bg-stars.png"
+              alt="Stars Background"
+              fill
+              priority
+              unoptimized
+              className="absolute inset-0 bg-cover bg-center"
+            />
+            <div className="relative z-10 mb-48">
               <h1 className="mx-4 mt-48 bg-gradient-to-r from-[#BFBFC2] via-[#FDFDFD] to-[#BFBFC2] bg-clip-text text-5xl font-medium tracking-wide md:mx-0">
                 Be part of the new Business{" "}
-                <span className="bg-gradient-to-r from-[#E5CD82] via-[#C2AE72] to-[#978760] bg-clip-text">
+                <span className="text-[#EFD687]">
                   Revolution
                 </span>
               </h1>
               <h3 className="mt-4 bg-gradient-to-r from-[#BFBFC2] via-[#FDFDFD] to-[#BFBFC2] bg-clip-text text-2xl font-medium tracking-wide">
-                <span className="bg-gradient-to-r from-[#E5CD82] via-[#C2AE72] to-[#978760] bg-clip-text">
+                <span className="text-[#EFD687]">
                   Select your path
                 </span>{" "}
                 and start your journey today!
               </h3>
               <div className="mt-8 p-6">
                 <div className="mx-auto flex max-w-4xl flex-col justify-center gap-4 md:flex-row">
-                  <div className="flex flex-col items-center rounded-2xl border-2 border-white/10 bg-[#2D2F3D] bg-opacity-30 px-6 py-16 backdrop-blur-sm">
+                  <div className="flex flex-col items-center rounded-2xl border-2 border-white/10 bg-[#363848] bg-opacity-30 px-6 py-16 backdrop-blur-md">
                     <Image
                       src={"/images/astronaut.png"}
                       alt="Imvestor"
                       width={64}
                       height={180}
                     />
-                    <h2 className="mt-4 bg-gradient-to-r from-[#E5CD82] via-[#C2AE72] to-[#978760] bg-clip-text text-xl font-semibold">
+                    <h2 className="mt-4 text-[#EFD687] text-xl font-semibold">
                       ENTREPRENEUR
                     </h2>
                     <p className="mt-2 max-w-xs text-center text-gray-300">
@@ -232,7 +240,7 @@ export default function Home() {
                       business incubator, we&apos;ve got you covered
                     </p>
                   </div>
-                  <div className="flex flex-col items-center rounded-2xl border-2 border-white/10 bg-[#2D2F3D] bg-opacity-30 px-6 py-16 backdrop-blur-sm">
+                  <div className="flex flex-col items-center rounded-2xl border-2 border-white/10 bg-[#363848] bg-opacity-30 px-6 py-16 backdrop-blur-md">
                     <Image
                       src={"/images/rocket.png"}
                       alt="Imvestor"
@@ -240,7 +248,7 @@ export default function Home() {
                       height={180}
                       className="mt-6"
                     />
-                    <h2 className="mt-4 bg-gradient-to-r from-[#E5CD82] via-[#C2AE72] to-[#978760] bg-clip-text text-xl font-semibold">
+                    <h2 className="mt-4 text-[#EFD687] text-xl font-semibold">
                       INVESTOR
                     </h2>
                     <p className="mt-2 max-w-xs text-center text-gray-300">
@@ -276,7 +284,7 @@ export default function Home() {
               </p>
             </div>
             <div className="w-full md:w-1/2">
-              <div className="flex flex-col items-center justify-center rounded-2xl border-[1px] border-white/10 bg-[#2D2F3D] bg-opacity-30 p-6 text-center backdrop-blur-md">
+              <div className="flex flex-col items-center justify-center rounded-2xl border-[1px] border-white/10 bg-[#20222c] bg-opacity-30 p-6 text-center backdrop-blur-md">
                 <Image
                   src={"/images/home-diamond.svg"}
                   alt="Imvestor"
