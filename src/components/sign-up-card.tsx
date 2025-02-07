@@ -11,7 +11,7 @@ export const SignUpCard = ({
   features: string[];
 }) => {
   return (
-    <div className="flex max-w-2xl flex-col items-center justify-center">
+    <div className="flex w-96 flex-col items-center justify-center">
       <Image
         src={"/images/card-hole.png"}
         alt="Card Hole"

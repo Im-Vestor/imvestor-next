@@ -8,6 +8,8 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
+import { FinishCard } from "~/components/finish-card";
+import { Header } from "~/components/header";
 import { SignUpCard } from "~/components/sign-up-card";
 import { Button } from "~/components/ui/button";
 import { Calendar } from "~/components/ui/calendar";
@@ -35,9 +37,6 @@ const formSchema = z.object({
   }),
   skills: z.array(z.number()).default([]),
   referralToken: z.string().optional(),
-  acceptTerms: z.boolean().refine((val) => val === true, {
-    message: "You must accept the terms and conditions",
-  }),
 });
 
 export default function SignupEntrepreneur() {
@@ -56,7 +55,6 @@ export default function SignupEntrepreneur() {
       birthDate: undefined,
       skills: [],
       referralToken: "",
-      acceptTerms: false,
     },
   });
 
@@ -77,25 +75,32 @@ export default function SignupEntrepreneur() {
     },
   });
 
-  const onSubmit = async (data: z.infer<typeof formSchema>) => {
+  const createEntrepreneur = async (data: z.infer<typeof formSchema>) => {
     registerEntrepreneur(data);
   };
 
   return (
-    <main className="flex min-h-screen items-center justify-center">
-      <div className="my-12 min-w-[40rem] max-w-[40rem] rounded-2xl border-4 border-white/10 bg-[#181920] bg-opacity-30 p-6 backdrop-blur-md">
-        <button
-          type="button"
-          className="flex items-center gap-2 hover:opacity-75"
-          onClick={() => (step > 1 ? setStep(step - 1) : router.back())}
-        >
-          <ArrowLeft className="h-4 w-4" /> Back
-        </button>
+    <main className="flex min-h-screen flex-col items-center">
+      <div className="mt-4 w-full min-w-[80rem] max-w-[80rem]">
+        <Header />
+      </div>
+      <div
+        className={`max-w-[40rem] ${step !== 4 && "rounded-2xl border-4 border-white/10 bg-[#181920] bg-opacity-30 p-6 backdrop-blur-md"}`}
+      >
+        {step !== 4 && (
+          <button
+            type="button"
+            className="flex items-center gap-2 hover:opacity-75"
+            onClick={() => (step > 1 ? setStep(step - 1) : router.back())}
+          >
+            <ArrowLeft className="h-4 w-4" /> Back
+          </button>
+        )}
 
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="mt-8">
+          <form className="mt-8">
             {step === 1 && (
-              <>
+              <div className="min-w-[30rem] max-w-[30rem]">
                 <h2 className="my-8 text-center text-4xl font-semibold">
                   Your account as <br />
                   <span className="text-[#E5CD82]">Entrepreneur</span>
@@ -250,10 +255,10 @@ export default function SignupEntrepreneur() {
                     )}
                   />
                 </div>
-              </>
+              </div>
             )}
             {step === 2 && (
-              <>
+              <div className="min-w-[30rem] max-w-[30rem]">
                 <h2 className="my-8 text-center text-4xl font-semibold">
                   Were you <br />
                   <span className="text-[#E5CD82]">referred?</span>
@@ -276,7 +281,7 @@ export default function SignupEntrepreneur() {
                     )}
                   />
                 </div>
-              </>
+              </div>
             )}
             {step === 3 && (
               <SignUpCard
@@ -293,28 +298,26 @@ export default function SignupEntrepreneur() {
                 ]}
               />
             )}
-            {step === 4 && <>
-              
-            </>}
-            {step === 4 ? (
+            {step === 4 && (
+              <>
+                <FinishCard name={form.getValues("firstName")} />
+              </>
+            )}
+            {step !== 4 && (
               <Button
-                type="submit"
+                type={"button"}
                 className="mt-12 w-full"
                 disabled={isPending || !form.formState.isValid}
+                onClick={async () => {
+                  if (step === 2) await createEntrepreneur(form.getValues());
+                  setStep(step + 1);
+                }}
               >
-                {isPending
-                  ? "Creating account..."
+                {step === 3
+                  ? "Take your pass"
                   : form.formState.isValid
-                    ? "Go to Login"
-                    : "Please fill all the fields"}
-              </Button>
-            ) : (
-              <Button
-                type="button"
-                className="mt-12 w-full"
-                onClick={() => setStep(step + 1)}
-              >
-                {step === 3 ? "Take your pass" : "Continue"}{" "}
+                    ? "Continue"
+                    : "Please fill all the fields"}{" "}
                 <ArrowRight className="ml-2" />
               </Button>
             )}
