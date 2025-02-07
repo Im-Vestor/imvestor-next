@@ -1,7 +1,6 @@
 import axios, { type AxiosError } from "axios";
 
-const BASE_URL =
-  "http://ec2-13-60-216-152.eu-north-1.compute.amazonaws.com:3000/api";
+const BASE_URL = process.env.NEXT_PUBLIC_API_URL;
 
 export const api = axios.create({
   baseURL: BASE_URL,
@@ -237,6 +236,23 @@ interface UploadFileRequest {
   size: string;
   base64: string;
 }
+
+export interface Country {
+  id: number;
+  name: string;
+  iso: string;
+}
+
+export const countryAndCityApi = {
+  getCountryList: async () => {
+    const response = await api.get<Country[]>("/country");
+    return response.data;
+  },
+  getStateList: async (countryId: number) => {
+    const response = await api.get<string[]>(`/country/${countryId}`);
+    return response.data;
+  },
+};
 
 export const projectApi = {
   createProject: async (data: ProjectRequest) => {

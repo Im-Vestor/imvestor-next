@@ -261,7 +261,7 @@ export default function Home() {
             </div>
           </div>
 
-          <div className="mt-48 flex w-full max-w-4xl flex-col justify-center gap-24 p-6 text-center md:flex-row md:text-start">
+          <div className="mt-24 flex w-full max-w-4xl flex-col justify-center gap-24 p-6 text-center md:flex-row md:text-start">
             <div className="w-full md:w-1/2">
               <h3 className="bg-gradient-to-r from-[#BFBFC2] via-[#FDFDFD] to-[#BFBFC2] bg-clip-text text-4xl font-medium tracking-wide text-transparent">
                 <span className="bg-gradient-to-r from-[#E5CD82] via-[#C2AE72] to-[#978760] bg-clip-text text-transparent">

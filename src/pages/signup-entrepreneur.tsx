@@ -1,12 +1,14 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Popover, PopoverTrigger } from "@radix-ui/react-popover";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation } from "@tanstack/react-query";
 import { format } from "date-fns";
 import { ArrowLeft, ArrowRight, CalendarIcon } from "lucide-react";
 import { useRouter } from "next/router";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
+import { SignUpCard } from "~/components/sign-up-card";
 import { Button } from "~/components/ui/button";
 import { Calendar } from "~/components/ui/calendar";
 import {
@@ -14,15 +16,12 @@ import {
   FormControl,
   FormField,
   FormItem,
-  FormLabel,
   FormMessage,
 } from "~/components/ui/form";
 import { Input } from "~/components/ui/input";
-import { MultiSelect } from "~/components/ui/multi-select";
 import { PhoneInput } from "~/components/ui/phone-input";
 import { PopoverContent } from "~/components/ui/popover";
-import { authApi, skillsApi } from "~/lib/api";
-import { cn } from "~/lib/utils";
+import { authApi } from "~/lib/api";
 
 const formSchema = z.object({
   firstName: z.string().min(2, "First name must be at least 2 characters"),
@@ -36,10 +35,14 @@ const formSchema = z.object({
   }),
   skills: z.array(z.number()).default([]),
   referralToken: z.string().optional(),
+  acceptTerms: z.boolean().refine((val) => val === true, {
+    message: "You must accept the terms and conditions",
+  }),
 });
 
 export default function SignupEntrepreneur() {
   const router = useRouter();
+  const [step, setStep] = useState(1);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -50,15 +53,11 @@ export default function SignupEntrepreneur() {
       password: "",
       fiscalCode: "",
       mobileFone: "",
-      birthDate: new Date(),
+      birthDate: undefined,
       skills: [],
-      referralToken: (router.query.referralToken as string) ?? "",
+      referralToken: "",
+      acceptTerms: false,
     },
-  });
-
-  const { data: skills } = useQuery({
-    queryKey: ["skills"],
-    queryFn: skillsApi.getSkillsList,
   });
 
   const { mutate: registerEntrepreneur, isPending } = useMutation({
@@ -66,7 +65,6 @@ export default function SignupEntrepreneur() {
       return authApi.registerEntrepreneur({
         ...data,
         birthDate: format(data.birthDate, "yyyy-MM-dd"),
-        skills: data.skills ?? [],
       });
     },
     onSuccess: () => {
@@ -79,7 +77,7 @@ export default function SignupEntrepreneur() {
     },
   });
 
-  const onSubmit = (data: z.infer<typeof formSchema>) => {
+  const onSubmit = async (data: z.infer<typeof formSchema>) => {
     registerEntrepreneur(data);
   };
 
@@ -89,215 +87,240 @@ export default function SignupEntrepreneur() {
         <button
           type="button"
           className="flex items-center gap-2 hover:opacity-75"
-          onClick={() => router.back()}
+          onClick={() => (step > 1 ? setStep(step - 1) : router.back())}
         >
           <ArrowLeft className="h-4 w-4" /> Back
         </button>
 
-        <h2 className="mt-8 text-center text-4xl font-semibold">
-          Your account as <br />
-          <span className="text-[#E5CD82]">Entrepreneur</span>
-        </h2>
-
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="mt-8">
-            <div className="grid grid-cols-2 gap-4">
-              <FormField
-                control={form.control}
-                name="firstName"
-                render={({ field }) => (
-                  <FormItem className="mt-4">
-                    <FormLabel className="text-white">First Name</FormLabel>
-                    <FormControl>
-                      <Input
-                        {...field}
-                        className="bg-[#181920] text-white placeholder:text-gray-400"
-                        placeholder="John"
-                        disabled={isPending}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
+            {step === 1 && (
+              <>
+                <h2 className="my-8 text-center text-4xl font-semibold">
+                  Your account as <br />
+                  <span className="text-[#E5CD82]">Entrepreneur</span>
+                </h2>
+
+                <div className="space-y-4">
+                  <FormField
+                    control={form.control}
+                    name="firstName"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormControl>
+                          <Input
+                            {...field}
+                            placeholder="First Name*"
+                            disabled={isPending}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="lastName"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormControl>
+                          <Input
+                            {...field}
+                            placeholder="Last Name*"
+                            disabled={isPending}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="mobileFone"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormControl>
+                          <PhoneInput
+                            {...field}
+                            placeholder="999 999 999"
+                            disabled={isPending}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="birthDate"
+                    render={({ field }) => (
+                      <FormItem className="flex flex-col">
+                        <Popover>
+                          <PopoverTrigger asChild>
+                            <FormControl>
+                              <Button
+                                variant={"outline"}
+                                className="border-none"
+                              >
+                                {field.value ? (
+                                  format(field.value, "PPP")
+                                ) : (
+                                  <span className="font-normal text-[#E5E7EA]">
+                                    Birth Date*
+                                  </span>
+                                )}
+                                <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                              </Button>
+                            </FormControl>
+                          </PopoverTrigger>
+                          <PopoverContent
+                            className="w-auto border-none p-0"
+                            align="start"
+                          >
+                            <Calendar
+                              mode="single"
+                              selected={field.value}
+                              onSelect={field.onChange}
+                              disabled={(date) =>
+                                date > new Date() ||
+                                date < new Date("1900-01-01")
+                              }
+                              initialFocus
+                            />
+                          </PopoverContent>
+                        </Popover>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="email"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormControl>
+                          <Input
+                            {...field}
+                            type="email"
+                            placeholder="Email*"
+                            disabled={isPending}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="password"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormControl>
+                          <Input
+                            {...field}
+                            type="password"
+                            placeholder="Password*"
+                            disabled={isPending}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="fiscalCode"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormControl>
+                          <Input
+                            {...field}
+                            placeholder="Fiscal Code*"
+                            disabled={isPending}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+              </>
+            )}
+            {step === 2 && (
+              <>
+                <h2 className="my-8 text-center text-4xl font-semibold">
+                  Were you <br />
+                  <span className="text-[#E5CD82]">referred?</span>
+                </h2>
+                <div className="space-y-4">
+                  <FormField
+                    control={form.control}
+                    name="referralToken"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormControl>
+                          <Input
+                            {...field}
+                            placeholder="Referral Token (optional)"
+                            disabled={isPending}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+              </>
+            )}
+            {step === 3 && (
+              <SignUpCard
+                name={
+                  form.getValues("firstName") + " " + form.getValues("lastName")
+                }
+                type="entrepreneur"
+                features={[
+                  "1 active project at a time",
+                  "Up to 5 investors per project",
+                  "Investor Search",
+                  "View investor profiles",
+                  "1 free pokes per month",
+                ]}
               />
-
-              <FormField
-                control={form.control}
-                name="lastName"
-                render={({ field }) => (
-                  <FormItem className="mt-4">
-                    <FormLabel className="text-white">Last Name</FormLabel>
-                    <FormControl>
-                      <Input
-                        {...field}
-                        className="bg-[#181920] text-white placeholder:text-gray-400"
-                        placeholder="Doe"
-                        disabled={isPending}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </div>
-
-            <FormField
-              control={form.control}
-              name="email"
-              render={({ field }) => (
-                <FormItem className="mt-4">
-                  <FormLabel className="text-white">Email</FormLabel>
-                  <FormControl>
-                    <Input
-                      {...field}
-                      type="email"
-                      className="bg-[#181920] text-white placeholder:text-gray-400"
-                      placeholder="john@example.com"
-                      disabled={isPending}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="password"
-              render={({ field }) => (
-                <FormItem className="mt-4">
-                  <FormLabel className="text-white">Password</FormLabel>
-                  <FormControl>
-                    <Input
-                      {...field}
-                      type="password"
-                      className="bg-[#181920] text-white placeholder:text-gray-400"
-                      placeholder="********"
-                      disabled={isPending}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="fiscalCode"
-              render={({ field }) => (
-                <FormItem className="mt-4">
-                  <FormLabel className="text-white">Fiscal Code</FormLabel>
-                  <FormControl>
-                    <Input
-                      {...field}
-                      className="bg-[#181920] text-white placeholder:text-gray-400"
-                      placeholder="Enter your fiscal code"
-                      disabled={isPending}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="mobileFone"
-              render={({ field }) => (
-                <FormItem className="mt-4">
-                  <FormLabel className="text-white">Mobile Phone</FormLabel>
-                  <FormControl>
-                    <PhoneInput
-                      {...field}
-                      className="bg-[#181920] text-white"
-                      placeholder="Enter your phone number"
-                      disabled={isPending}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="birthDate"
-              render={({ field }) => (
-                <FormItem className="mt-4 flex flex-col">
-                  <FormLabel className="text-white">Birth Date</FormLabel>
-                  <Popover>
-                    <PopoverTrigger asChild>
-                      <FormControl>
-                        <Button
-                          variant={"outline"}
-                          className={cn(
-                            "w-full pl-3 text-left font-normal",
-                            !field.value && "text-muted-foreground"
-                          )}
-                        >
-                          {field.value ? (
-                            format(field.value, "PPP")
-                          ) : (
-                            <span>Pick a date</span>
-                          )}
-                          <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                        </Button>
-                      </FormControl>
-                    </PopoverTrigger>
-                    <PopoverContent className="w-auto p-0 border-none" align="start">
-                      <Calendar
-                        mode="single"
-                        selected={field.value}
-                        onSelect={field.onChange}
-                        disabled={(date) =>
-                          date > new Date() || date < new Date("1900-01-01")
-                        }
-                        initialFocus
-                      />
-                    </PopoverContent>
-                  </Popover>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="skills"
-              render={({ field }) => (
-                <FormItem className="mt-4">
-                  <FormLabel className="text-white">Skills</FormLabel>
-                  <FormControl>
-                    <MultiSelect
-                      options={
-                        skills?.map((skill) => ({
-                          label: skill.description,
-                          value: skill.id.toString(),
-                        })) ?? []
-                      }
-                      selected={field.value.map(String)}
-                      onChange={(values) =>
-                        field.onChange(values.map((v) => Number(v)))
-                      }
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <Button type="submit" className="mt-12 w-full" disabled={isPending}>
-              {isPending ? (
-                "Creating account..."
-              ) : (
-                <>
-                  Create Account <ArrowRight className="ml-2" />
-                </>
-              )}
-            </Button>
+            )}
+            {step === 4 && <>
+              
+            </>}
+            {step === 4 ? (
+              <Button
+                type="submit"
+                className="mt-12 w-full"
+                disabled={isPending || !form.formState.isValid}
+              >
+                {isPending
+                  ? "Creating account..."
+                  : form.formState.isValid
+                    ? "Go to Login"
+                    : "Please fill all the fields"}
+              </Button>
+            ) : (
+              <Button
+                type="button"
+                className="mt-12 w-full"
+                onClick={() => setStep(step + 1)}
+              >
+                {step === 3 ? "Take your pass" : "Continue"}{" "}
+                <ArrowRight className="ml-2" />
+              </Button>
+            )}
           </form>
         </Form>
       </div>
     </main>
   );
-} 
+}
