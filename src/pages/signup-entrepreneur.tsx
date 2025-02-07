@@ -81,11 +81,11 @@ export default function SignupEntrepreneur() {
 
   return (
     <main className="flex min-h-screen flex-col items-center">
-      <div className="mt-4 w-full min-w-[80rem] max-w-[80rem]">
+      <div className="mt-4 w-full md:min-w-[80rem] md:max-w-[80rem]">
         <Header />
       </div>
       <div
-        className={`max-w-[40rem] ${step !== 4 && "rounded-2xl border-4 border-white/10 bg-[#181920] bg-opacity-30 p-6 backdrop-blur-md"}`}
+        className={`md:max-w-[40rem] ${step !== 4 && "rounded-2xl border-4 border-white/10 bg-[#181920] bg-opacity-30 p-6 backdrop-blur-md"}`}
       >
         {step !== 4 && (
           <button
@@ -100,7 +100,7 @@ export default function SignupEntrepreneur() {
         <Form {...form}>
           <form className="mt-8">
             {step === 1 && (
-              <div className="min-w-[30rem] max-w-[30rem]">
+              <div className="md:min-w-[30rem] md:max-w-[30rem]">
                 <h2 className="my-8 text-center text-4xl font-semibold">
                   Your account as <br />
                   <span className="text-[#E5CD82]">Entrepreneur</span>
@@ -258,7 +258,7 @@ export default function SignupEntrepreneur() {
               </div>
             )}
             {step === 2 && (
-              <div className="min-w-[30rem] max-w-[30rem]">
+              <div className="min-w-[20rem] md:min-w-[30rem] md:max-w-[30rem]">
                 <h2 className="my-8 text-center text-4xl font-semibold">
                   Were you <br />
                   <span className="text-[#E5CD82]">referred?</span>

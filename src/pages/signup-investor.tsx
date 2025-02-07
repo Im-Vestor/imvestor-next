@@ -115,11 +115,11 @@ export default function SignupInvestor() {
 
   return (
     <main className="flex min-h-screen flex-col items-center">
-      <div className="mt-4 w-full min-w-[80rem] max-w-[80rem]">
+      <div className="mt-4 w-full md:min-w-[80rem] md:max-w-[80rem]">
         <Header />
       </div>
       <div
-        className={`max-w-[40rem] ${step !== 7 && "rounded-2xl border-4 border-white/10 bg-[#181920] bg-opacity-30 p-6 backdrop-blur-md"}`}
+        className={`md:max-w-[40rem] ${step !== 7 && "rounded-2xl border-4 border-white/10 bg-[#181920] bg-opacity-30 p-6 backdrop-blur-md"}`}
       >
         {step !== 7 && (
           <button
@@ -134,7 +134,7 @@ export default function SignupInvestor() {
         <Form {...form}>
           <form className="mt-8">
             {step === 1 && (
-              <div className="min-w-[30rem] max-w-[30rem]">
+              <div className="md:min-w-[30rem] md:max-w-[30rem]">
                 <h2 className="my-8 text-center text-4xl font-semibold">
                   Your account as <br />
                   <span className="text-[#E5CD82]">Investor</span>
@@ -293,7 +293,7 @@ export default function SignupInvestor() {
             )}
 
             {step === 2 && (
-              <div className="min-w-[30rem] max-w-[30rem]">
+              <div className="md:min-w-[30rem] md:max-w-[30rem]">
                 <h2 className="my-8 text-center text-4xl font-semibold">
                   Select your <br />
                   <span className="text-[#E5CD82]">Investment Areas</span>
@@ -327,7 +327,7 @@ export default function SignupInvestor() {
             )}
 
             {step === 3 && (
-              <div className="min-w-[30rem] max-w-[30rem]">
+              <div className="md:min-w-[30rem] md:max-w-[30rem]">
                 <h2 className="my-8 text-center text-4xl font-semibold">
                   What are your <br />
                   <span className="text-[#E5CD82]">Investment capacity?</span>
@@ -430,7 +430,7 @@ export default function SignupInvestor() {
             )}
 
             {step === 4 && (
-              <div className="min-w-[25rem] max-w-[25rem]">
+              <div className="md:min-w-[25rem] md:max-w-[25rem]">
                 <h2 className="mt-8 mb-12 text-center text-4xl font-semibold">
                   Terms & <span className="text-[#E5CD82]">Conditions</span>
                 </h2>
@@ -481,7 +481,7 @@ export default function SignupInvestor() {
             )}
 
             {step === 5 && (
-              <div className="min-w-[30rem] max-w-[30rem]">
+              <div className="min-w-[20rem] md:min-w-[30rem] md:max-w-[30rem]">
                 <h2 className="my-8 text-center text-4xl font-semibold">
                   Were you <br />
                   <span className="text-[#E5CD82]">referred?</span>

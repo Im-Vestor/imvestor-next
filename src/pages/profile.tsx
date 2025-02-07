@@ -555,7 +555,7 @@ export default function Profile() {
             </p>
             <h3 className="mt-12 font-semibold">Company</h3>
             <Button
-              className="mt-4 w-1/3"
+              className="mt-4 md:w-1/3"
               onClick={() => router.push("/create-company")}
             >
               Add your Company
@@ -741,7 +741,7 @@ export default function Profile() {
               />
             </div>
 
-            <div className="mx-6 flex justify-end gap-4 pt-8">
+            <div className="mx-6 flex justify-end gap-4 pt-8 pb-8">
               <Button
                 variant="secondary"
                 disabled={isUpdatingInvestor}
