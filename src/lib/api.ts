@@ -243,7 +243,7 @@ export interface Country {
   iso: string;
 }
 
-export const countryAndCityApi = {
+export const countryAndStateApi = {
   getCountryList: async () => {
     const response = await api.get<Country[]>("/country");
     return response.data;

@@ -26,7 +26,7 @@ import {
   SelectValue,
 } from "~/components/ui/select";
 import { Textarea } from "~/components/ui/textarea";
-import { api, type Country, countryAndCityApi } from "~/lib/api";
+import { api, type Country, countryAndStateApi } from "~/lib/api";
 
 interface EntrepreneurProfile {
   avatar: string | null;
@@ -90,8 +90,10 @@ const investorFormSchema = z.object({
 export default function Profile() {
   const router = useRouter();
   const [countries, setCountries] = useState<Country[]>([]);
+  const [states, setStates] = useState<string[]>([]);
   const [isEditing, setIsEditing] = useState(false);
   const [isUploadingBanner, setIsUploadingBanner] = useState(false);
+  const [isLoadingStates, setIsLoadingStates] = useState(false);
   const userType =
     typeof window !== "undefined" ? sessionStorage.getItem("type") : null;
 
@@ -124,7 +126,7 @@ export default function Profile() {
   useQuery({
     queryKey: ["countries"],
     queryFn: async () => {
-      const response = await countryAndCityApi.getCountryList();
+      const response = await countryAndStateApi.getCountryList();
       setCountries(response);
     },
     enabled: !!userType,
@@ -186,6 +188,20 @@ export default function Profile() {
       },
     },
   );
+
+  const fetchStates = async (countryId: string) => {
+    try {
+      setIsLoadingStates(true);
+      const response = await countryAndStateApi.getStateList(parseInt(countryId));
+      setStates(response);
+    } catch (error) {
+      console.error("Error fetching states:", error);
+      toast.error("Failed to load states");
+      setStates([]);
+    } finally {
+      setIsLoadingStates(false);
+    }
+  };
 
   const handleBannerUpload = async (e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -278,7 +294,7 @@ export default function Profile() {
             onSubmit={entrepreneurForm.handleSubmit((data) =>
               updateEntrepreneur(data),
             )}
-            className="space-y-4 rounded-lg border-2 border-white/10 bg-[#242630]"
+            className="space-y-4 rounded-lg border-2 border-white/10 bg-[#242630] px-6"
           >
             {renderBannerUpload(data.banner)}
 
@@ -369,8 +385,12 @@ export default function Profile() {
                   <FormItem>
                     <FormControl>
                       <Select
-                        onValueChange={field.onChange}
-                        defaultValue={field.value}
+                        value={field.value}
+                        onValueChange={(value: string) => {
+                          field.onChange(value);
+                          void fetchStates(value);
+                          entrepreneurForm.setValue("city", "");
+                        }}
                       >
                         <SelectTrigger disabled={isUpdatingEntrepreneur}>
                           <SelectValue placeholder="Country*" />
@@ -398,11 +418,25 @@ export default function Profile() {
                 render={({ field }) => (
                   <FormItem>
                     <FormControl>
-                      <Input
-                        placeholder="City*"
-                        {...field}
-                        disabled={isUpdatingEntrepreneur}
-                      />
+                      <Select
+                        value={field.value}
+                        onValueChange={(value: string) => field.onChange(value)}
+                        disabled={isUpdatingEntrepreneur || !entrepreneurForm.getValues("country") || isLoadingStates}
+                      >
+                        <SelectTrigger>
+                          <SelectValue placeholder="State*" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {states.map((state) => (
+                            <SelectItem
+                              key={state}
+                              value={state}
+                            >
+                              {state}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -463,7 +497,7 @@ export default function Profile() {
               )}
             />
 
-            <div className="flex justify-end gap-4 pt-8">
+            <div className="flex justify-end gap-4 pt-8 pb-8">
               <Button
                 variant="secondary"
                 disabled={isUpdatingEntrepreneur}
@@ -628,11 +662,28 @@ export default function Profile() {
                 render={({ field }) => (
                   <FormItem>
                     <FormControl>
-                      <Input
-                        placeholder="Country*"
-                        {...field}
-                        disabled={isUpdatingInvestor}
-                      />
+                      <Select
+                        value={field.value}
+                        onValueChange={(value: string) => {
+                          field.onChange(value);
+                          void fetchStates(value);
+                          investorForm.setValue("city", "");
+                        }}
+                      >
+                        <SelectTrigger disabled={isUpdatingInvestor}>
+                          <SelectValue placeholder="Country*" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {countries.map((country) => (
+                            <SelectItem
+                              key={country.id}
+                              value={country.id.toString()}
+                            >
+                              {country.name}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -645,11 +696,25 @@ export default function Profile() {
                 render={({ field }) => (
                   <FormItem>
                     <FormControl>
-                      <Input
-                        placeholder="City*"
-                        {...field}
-                        disabled={isUpdatingInvestor}
-                      />
+                      <Select
+                        value={field.value}
+                        onValueChange={(value: string) => field.onChange(value)}
+                        disabled={isUpdatingInvestor || !investorForm.getValues("country") || isLoadingStates}
+                      >
+                        <SelectTrigger>
+                          <SelectValue placeholder="State*" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {states.map((state) => (
+                            <SelectItem
+                              key={state}
+                              value={state}
+                            >
+                              {state}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -676,7 +741,7 @@ export default function Profile() {
               />
             </div>
 
-            <div className="mx-6 flex justify-end gap-4 pb-6 pt-8">
+            <div className="mx-6 flex justify-end gap-4 pt-8">
               <Button
                 variant="secondary"
                 disabled={isUpdatingInvestor}
