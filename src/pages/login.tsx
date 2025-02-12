@@ -8,6 +8,7 @@ import { toast } from "sonner";
 import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";
 import { authApi } from "~/lib/api";
+import { Label } from "~/components/ui/label";
 
 export default function Login() {
   const [email, setEmail] = useState("");
@@ -59,28 +60,34 @@ export default function Login() {
 
             <form onSubmit={handleSubmit} className="mt-8 space-y-6">
               <div className="space-y-4">
-                <Input
-                  onChange={(e) => setEmail(e.target.value)}
-                  value={email}
-                  id="email"
-                  name="email"
-                  type="email"
-                  required
-                  placeholder="Email address"
-                  className="bg-[#282B37] p-4 placeholder:text-white"
-                  disabled={isPending}
-                />
-                <Input
-                  onChange={(e) => setPassword(e.target.value)}
-                  value={password}
-                  id="password"
-                  name="password"
-                  type="password"
-                  required
-                  placeholder="Password"
-                  className="bg-[#282B37] p-4 placeholder:text-white"
-                  disabled={isPending}
-                />
+                <div className="space-y-2">
+                  <Label className="font-normal text-neutral-200">Email*</Label>
+                  <Input
+                    onChange={(e) => setEmail(e.target.value)}
+                    value={email}
+                    id="email"
+                    name="email"
+                    type="email"
+                    required
+                    placeholder="example@email.com"
+                    className="bg-[#282B37] p-4 placeholder:text-white"
+                    disabled={isPending}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label className="font-normal text-neutral-200">Password*</Label>
+                  <Input
+                    onChange={(e) => setPassword(e.target.value)}
+                    value={password}
+                    id="password"
+                    name="password"
+                    type="password"
+                    required
+                    placeholder="••••••••"
+                    className="bg-[#282B37] p-4 placeholder:text-white"
+                    disabled={isPending}
+                  />
+                </div>
               </div>
 
               <Button type="submit" className="w-full" disabled={isPending}>

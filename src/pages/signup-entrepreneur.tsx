@@ -21,6 +21,7 @@ import {
   FormMessage,
 } from "~/components/ui/form";
 import { Input } from "~/components/ui/input";
+import { Label } from "~/components/ui/label";
 import { PhoneInput } from "~/components/ui/phone-input";
 import { PopoverContent } from "~/components/ui/popover";
 import { authApi } from "~/lib/api";
@@ -112,10 +113,13 @@ export default function SignupEntrepreneur() {
                     name="firstName"
                     render={({ field }) => (
                       <FormItem>
+                        <Label className="font-normal text-neutral-200">
+                          First Name*
+                        </Label>
                         <FormControl>
                           <Input
                             {...field}
-                            placeholder="First Name*"
+                            placeholder="John"
                             disabled={isPending}
                           />
                         </FormControl>
@@ -129,10 +133,13 @@ export default function SignupEntrepreneur() {
                     name="lastName"
                     render={({ field }) => (
                       <FormItem>
+                        <Label className="font-normal text-neutral-200">
+                          Last Name*
+                        </Label>
                         <FormControl>
                           <Input
                             {...field}
-                            placeholder="Last Name*"
+                            placeholder="Doe"
                             disabled={isPending}
                           />
                         </FormControl>
@@ -146,6 +153,9 @@ export default function SignupEntrepreneur() {
                     name="mobileFone"
                     render={({ field }) => (
                       <FormItem>
+                        <Label className="font-normal text-neutral-200">
+                          Mobile Phone*
+                        </Label>
                         <FormControl>
                           <PhoneInput
                             {...field}
@@ -163,6 +173,9 @@ export default function SignupEntrepreneur() {
                     name="birthDate"
                     render={({ field }) => (
                       <FormItem className="flex flex-col">
+                        <Label className="font-normal text-neutral-200">
+                          Birth Date*
+                        </Label>
                         <Popover>
                           <PopoverTrigger asChild>
                             <FormControl>
@@ -174,7 +187,7 @@ export default function SignupEntrepreneur() {
                                   format(field.value, "PPP")
                                 ) : (
                                   <span className="font-normal text-[#E5E7EA]">
-                                    Birth Date*
+                                    Select date
                                   </span>
                                 )}
                                 <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
@@ -207,11 +220,14 @@ export default function SignupEntrepreneur() {
                     name="email"
                     render={({ field }) => (
                       <FormItem>
+                        <Label className="font-normal text-neutral-200">
+                          Email*
+                        </Label>
                         <FormControl>
                           <Input
                             {...field}
                             type="email"
-                            placeholder="Email*"
+                            placeholder="example@email.com"
                             disabled={isPending}
                           />
                         </FormControl>
@@ -225,11 +241,14 @@ export default function SignupEntrepreneur() {
                     name="password"
                     render={({ field }) => (
                       <FormItem>
+                        <Label className="font-normal text-neutral-200">
+                          Password*
+                        </Label>
                         <FormControl>
                           <Input
                             {...field}
                             type="password"
-                            placeholder="Password*"
+                            placeholder="••••••••"
                             disabled={isPending}
                           />
                         </FormControl>
@@ -243,10 +262,13 @@ export default function SignupEntrepreneur() {
                     name="fiscalCode"
                     render={({ field }) => (
                       <FormItem>
+                        <Label className="font-normal text-neutral-200">
+                          Fiscal Code*
+                        </Label>
                         <FormControl>
                           <Input
                             {...field}
-                            placeholder="Fiscal Code*"
+                            placeholder="Enter your fiscal code"
                             disabled={isPending}
                           />
                         </FormControl>
@@ -269,10 +291,13 @@ export default function SignupEntrepreneur() {
                     name="referralToken"
                     render={({ field }) => (
                       <FormItem>
+                        <Label className="font-normal text-neutral-200">
+                          Referral Token (optional)
+                        </Label>
                         <FormControl>
                           <Input
                             {...field}
-                            placeholder="Referral Token (optional)"
+                            placeholder="8AC7SHAS"
                             disabled={isPending}
                           />
                         </FormControl>

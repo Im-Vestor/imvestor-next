@@ -18,6 +18,7 @@ import {
   FormMessage,
 } from "~/components/ui/form";
 import { Input } from "~/components/ui/input";
+import { Label } from "~/components/ui/label";
 import {
   Popover,
   PopoverContent,
@@ -236,8 +237,9 @@ export default function CreateCompany() {
                 name="companyName"
                 render={({ field }) => (
                   <FormItem>
+                    <Label className="font-normal text-neutral-200">Company Name*</Label>
                     <FormControl>
-                      <Input placeholder="Company Name*" {...field} />
+                      <Input placeholder="Enter company name" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -249,8 +251,9 @@ export default function CreateCompany() {
                 name="quickSolution"
                 render={({ field }) => (
                   <FormItem>
+                    <Label className="font-normal text-neutral-200">Quick Solution*</Label>
                     <FormControl>
-                      <Textarea placeholder="Quick Solution*" {...field} />
+                      <Textarea placeholder="Describe your solution" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -262,11 +265,12 @@ export default function CreateCompany() {
                 name="website"
                 render={({ field }) => (
                   <FormItem>
+                    <Label className="font-normal text-neutral-200">Website</Label>
                     <FormControl>
                       <Input
                         className="w-1/2"
                         type="url"
-                        placeholder="Website (optional)"
+                        placeholder="https://example.com"
                         {...field}
                       />
                     </FormControl>
@@ -280,6 +284,7 @@ export default function CreateCompany() {
                 name="foundationDate"
                 render={({ field }) => (
                   <FormItem>
+                    <Label className="font-normal text-neutral-200">Foundation Date*</Label>
                     <FormControl>
                       <Popover>
                         <PopoverTrigger asChild>
@@ -294,7 +299,7 @@ export default function CreateCompany() {
                               {field.value ? (
                                 format(field.value, "PPP")
                               ) : (
-                                <span>Foundation Date*</span>
+                                <span>Select date</span>
                               )}
                               <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
                             </Button>
@@ -327,8 +332,9 @@ export default function CreateCompany() {
                   name="companySector"
                   render={({ field }) => (
                     <FormItem>
+                      <Label className="font-normal text-neutral-200">Company Sector*</Label>
                       <FormControl>
-                        <Input placeholder="Company Sector*" {...field} />
+                        <Input placeholder="e.g. Technology" {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -340,6 +346,7 @@ export default function CreateCompany() {
                   name="companyStage"
                   render={({ field }) => (
                     <FormItem>
+                      <Label className="font-normal text-neutral-200">Company Stage*</Label>
                       <FormControl>
                         <Select
                           value={field.value}
@@ -348,7 +355,7 @@ export default function CreateCompany() {
                           }}
                         >
                           <SelectTrigger>
-                            <SelectValue placeholder="Company Stage*" />
+                            <SelectValue placeholder="Select stage" />
                           </SelectTrigger>
                           <SelectContent>
                             {COMPANY_STAGES.map((stage) => (
@@ -371,8 +378,9 @@ export default function CreateCompany() {
                   name="country"
                   render={({ field }) => (
                     <FormItem>
+                      <Label className="font-normal text-neutral-200">Country*</Label>
                       <FormControl>
-                        <Input placeholder="Country*" {...field} />
+                        <Input placeholder="Enter country" {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -384,8 +392,9 @@ export default function CreateCompany() {
                   name="city"
                   render={({ field }) => (
                     <FormItem>
+                      <Label className="font-normal text-neutral-200">City*</Label>
                       <FormControl>
-                        <Input placeholder="City*" {...field} />
+                        <Input placeholder="Enter city" {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -398,8 +407,9 @@ export default function CreateCompany() {
                 name="about"
                 render={({ field }) => (
                   <FormItem>
+                    <Label className="font-normal text-neutral-200">About Company*</Label>
                     <FormControl>
-                      <Textarea placeholder="About Company*" {...field} />
+                      <Textarea placeholder="Tell us about your company" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -414,10 +424,11 @@ export default function CreateCompany() {
                   name="startInvestment"
                   render={({ field }) => (
                     <FormItem>
+                      <Label className="font-normal text-neutral-200">Start Investment*</Label>
                       <FormControl>
                         <Input
                           type="number"
-                          placeholder="Start Investment*"
+                          placeholder="Enter amount in USD"
                           {...field}
                         />
                       </FormControl>
@@ -431,10 +442,11 @@ export default function CreateCompany() {
                   name="investorsSlots"
                   render={({ field }) => (
                     <FormItem>
+                      <Label className="font-normal text-neutral-200">Investors Slots*</Label>
                       <FormControl>
                         <Input
                           type="number"
-                          placeholder="Investors Slots*"
+                          placeholder="Enter number of slots"
                           {...field}
                         />
                       </FormControl>
@@ -450,10 +462,11 @@ export default function CreateCompany() {
                   name="annualRevenue"
                   render={({ field }) => (
                     <FormItem>
+                      <Label className="font-normal text-neutral-200">Annual Revenue*</Label>
                       <FormControl>
                         <Input
                           type="number"
-                          placeholder="Annual Revenue*"
+                          placeholder="Enter amount in USD"
                           {...field}
                         />
                       </FormControl>
@@ -467,10 +480,11 @@ export default function CreateCompany() {
                   name="equity"
                   render={({ field }) => (
                     <FormItem>
+                      <Label className="font-normal text-neutral-200">Equity</Label>
                       <FormControl>
                         <Input
                           type="number"
-                          placeholder="Equity (Optional)"
+                          placeholder="Enter equity percentage"
                           {...field}
                         />
                       </FormControl>
@@ -485,10 +499,11 @@ export default function CreateCompany() {
                 name="investmentGoal"
                 render={({ field }) => (
                   <FormItem>
+                    <Label className="font-normal text-neutral-200">Investment Goal*</Label>
                     <FormControl>
                       <Input
                         type="number"
-                        placeholder="Investment Goal*"
+                        placeholder="Enter amount in USD"
                         {...field}
                       />
                     </FormControl>

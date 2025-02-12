@@ -17,6 +17,7 @@ import {
   FormMessage,
 } from "~/components/ui/form";
 import { Input } from "~/components/ui/input";
+import { Label } from "~/components/ui/label";
 import { PhoneInput } from "~/components/ui/phone-input";
 import {
   Select,
@@ -192,7 +193,9 @@ export default function Profile() {
   const fetchStates = async (countryId: string) => {
     try {
       setIsLoadingStates(true);
-      const response = await countryAndStateApi.getStateList(parseInt(countryId));
+      const response = await countryAndStateApi.getStateList(
+        parseInt(countryId),
+      );
       setStates(response);
     } catch (error) {
       console.error("Error fetching states:", error);
@@ -310,9 +313,10 @@ export default function Profile() {
                 name="firstName"
                 render={({ field }) => (
                   <FormItem>
+                    <Label className="font-normal text-neutral-200">First Name*</Label>
                     <FormControl>
                       <Input
-                        placeholder="First Name*"
+                        placeholder="John"
                         {...field}
                         disabled={isUpdatingEntrepreneur}
                       />
@@ -327,9 +331,10 @@ export default function Profile() {
                 name="lastName"
                 render={({ field }) => (
                   <FormItem>
+                    <Label className="font-normal text-neutral-200">Last Name*</Label>
                     <FormControl>
                       <Input
-                        placeholder="Last Name*"
+                        placeholder="Doe"
                         {...field}
                         disabled={isUpdatingEntrepreneur}
                       />
@@ -346,9 +351,10 @@ export default function Profile() {
                 name="fiscalCode"
                 render={({ field }) => (
                   <FormItem>
+                    <Label className="font-normal text-neutral-200">Fiscal Code*</Label>
                     <FormControl>
                       <Input
-                        placeholder="Fiscal Code*"
+                        placeholder="01234567890"
                         {...field}
                         disabled={isUpdatingEntrepreneur}
                       />
@@ -363,6 +369,7 @@ export default function Profile() {
                 name="mobileFone"
                 render={({ field }) => (
                   <FormItem>
+                    <Label className="font-normal text-neutral-200">Mobile Phone*</Label>
                     <FormControl>
                       <PhoneInput
                         {...field}
@@ -383,6 +390,7 @@ export default function Profile() {
                 name="country"
                 render={({ field }) => (
                   <FormItem>
+                    <Label className="font-normal text-neutral-200">Country*</Label>
                     <FormControl>
                       <Select
                         value={field.value}
@@ -417,21 +425,23 @@ export default function Profile() {
                 name="city"
                 render={({ field }) => (
                   <FormItem>
+                    <Label className="font-normal text-neutral-200">State*</Label>
                     <FormControl>
                       <Select
                         value={field.value}
                         onValueChange={(value: string) => field.onChange(value)}
-                        disabled={isUpdatingEntrepreneur || !entrepreneurForm.getValues("country") || isLoadingStates}
+                        disabled={
+                          isUpdatingEntrepreneur ||
+                          !entrepreneurForm.getValues("country") ||
+                          isLoadingStates
+                        }
                       >
                         <SelectTrigger>
                           <SelectValue placeholder="State*" />
                         </SelectTrigger>
                         <SelectContent>
                           {states.map((state) => (
-                            <SelectItem
-                              key={state}
-                              value={state}
-                            >
+                            <SelectItem key={state} value={state}>
                               {state}
                             </SelectItem>
                           ))}
@@ -450,9 +460,10 @@ export default function Profile() {
                 name="companyName"
                 render={({ field }) => (
                   <FormItem>
+                    <Label className="font-normal text-neutral-200">Company Name*</Label>
                     <FormControl>
                       <Input
-                        placeholder="Company Name*"
+                        placeholder="Acme Inc."
                         {...field}
                         disabled={isUpdatingEntrepreneur}
                       />
@@ -467,9 +478,10 @@ export default function Profile() {
                 name="companyRole"
                 render={({ field }) => (
                   <FormItem>
+                    <Label className="font-normal text-neutral-200">Role*</Label>
                     <FormControl>
                       <Input
-                        placeholder="Role*"
+                        placeholder="CEO"
                         {...field}
                         disabled={isUpdatingEntrepreneur}
                       />
@@ -485,9 +497,10 @@ export default function Profile() {
               name="about"
               render={({ field }) => (
                 <FormItem>
+                  <Label className="font-normal text-neutral-200">About me</Label>
                   <FormControl>
                     <Textarea
-                      placeholder="About"
+                      placeholder="I'm a startup founder..."
                       {...field}
                       disabled={isUpdatingEntrepreneur}
                     />
@@ -497,7 +510,7 @@ export default function Profile() {
               )}
             />
 
-            <div className="flex justify-end gap-4 pt-8 pb-8">
+            <div className="flex justify-end gap-4 pb-8 pt-8">
               <Button
                 variant="secondary"
                 disabled={isUpdatingEntrepreneur}
@@ -588,9 +601,10 @@ export default function Profile() {
                 name="firstName"
                 render={({ field }) => (
                   <FormItem>
+                    <Label className="font-normal text-neutral-200">First Name*</Label>
                     <FormControl>
                       <Input
-                        placeholder="First Name*"
+                        placeholder="John"
                         {...field}
                         disabled={isUpdatingInvestor}
                       />
@@ -605,9 +619,10 @@ export default function Profile() {
                 name="lastName"
                 render={({ field }) => (
                   <FormItem>
+                    <Label className="font-normal text-neutral-200">Last Name*</Label>
                     <FormControl>
                       <Input
-                        placeholder="Last Name*"
+                        placeholder="Doe"
                         {...field}
                         disabled={isUpdatingInvestor}
                       />
@@ -624,9 +639,10 @@ export default function Profile() {
                 name="fiscalCode"
                 render={({ field }) => (
                   <FormItem>
+                    <Label className="font-normal text-neutral-200">Fiscal Code*</Label>
                     <FormControl>
                       <Input
-                        placeholder="Fiscal Code*"
+                        placeholder="01234567890"
                         {...field}
                         disabled={isUpdatingInvestor}
                       />
@@ -641,6 +657,7 @@ export default function Profile() {
                 name="mobileFone"
                 render={({ field }) => (
                   <FormItem>
+                    <Label className="font-normal text-neutral-200">Mobile Phone*</Label>
                     <FormControl>
                       <PhoneInput
                         {...field}
@@ -661,6 +678,7 @@ export default function Profile() {
                 name="country"
                 render={({ field }) => (
                   <FormItem>
+                    <Label className="font-normal text-neutral-200">Country*</Label>
                     <FormControl>
                       <Select
                         value={field.value}
@@ -695,21 +713,23 @@ export default function Profile() {
                 name="city"
                 render={({ field }) => (
                   <FormItem>
+                    <Label className="font-normal text-neutral-200">State*</Label>
                     <FormControl>
                       <Select
                         value={field.value}
                         onValueChange={(value: string) => field.onChange(value)}
-                        disabled={isUpdatingInvestor || !investorForm.getValues("country") || isLoadingStates}
+                        disabled={
+                          isUpdatingInvestor ||
+                          !investorForm.getValues("country") ||
+                          isLoadingStates
+                        }
                       >
                         <SelectTrigger>
                           <SelectValue placeholder="State*" />
                         </SelectTrigger>
                         <SelectContent>
                           {states.map((state) => (
-                            <SelectItem
-                              key={state}
-                              value={state}
-                            >
+                            <SelectItem key={state} value={state}>
                               {state}
                             </SelectItem>
                           ))}
@@ -728,9 +748,10 @@ export default function Profile() {
                 name="about"
                 render={({ field }) => (
                   <FormItem>
+                    <Label className="font-normal text-neutral-200">About me</Label>
                     <FormControl>
                       <Textarea
-                        placeholder="About"
+                        placeholder="I'm a Venture Capitalist..."
                         {...field}
                         disabled={isUpdatingInvestor}
                       />
@@ -741,7 +762,7 @@ export default function Profile() {
               />
             </div>
 
-            <div className="mx-6 flex justify-end gap-4 pt-8 pb-8">
+            <div className="mx-6 flex justify-end gap-4 pb-8 pt-8">
               <Button
                 variant="secondary"
                 disabled={isUpdatingInvestor}

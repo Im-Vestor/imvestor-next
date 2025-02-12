@@ -19,10 +19,10 @@ import {
   FormControl,
   FormField,
   FormItem,
-  FormLabel,
   FormMessage,
 } from "~/components/ui/form";
 import { Input } from "~/components/ui/input";
+import { Label } from "~/components/ui/label";
 import { MultiSelect } from "~/components/ui/multi-select";
 import { PhoneInput } from "~/components/ui/phone-input";
 import { PopoverContent } from "~/components/ui/popover";
@@ -146,12 +146,9 @@ export default function SignupInvestor() {
                     name="firstName"
                     render={({ field }) => (
                       <FormItem>
+                        <Label className="font-normal text-neutral-200">First Name*</Label>
                         <FormControl>
-                          <Input
-                            {...field}
-                            placeholder="First Name*"
-                            disabled={isPending}
-                          />
+                          <Input placeholder="John" {...field} disabled={isPending} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -163,12 +160,9 @@ export default function SignupInvestor() {
                     name="lastName"
                     render={({ field }) => (
                       <FormItem>
+                        <Label className="font-normal text-neutral-200">Last Name*</Label>
                         <FormControl>
-                          <Input
-                            {...field}
-                            placeholder="Last Name*"
-                            disabled={isPending}
-                          />
+                          <Input placeholder="Doe" {...field} disabled={isPending} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -180,11 +174,12 @@ export default function SignupInvestor() {
                     name="email"
                     render={({ field }) => (
                       <FormItem>
+                        <Label className="font-normal text-neutral-200">Email*</Label>
                         <FormControl>
                           <Input
                             {...field}
                             type="email"
-                            placeholder="Email*"
+                            placeholder="example@email.com"
                             disabled={isPending}
                           />
                         </FormControl>
@@ -198,11 +193,12 @@ export default function SignupInvestor() {
                     name="password"
                     render={({ field }) => (
                       <FormItem>
+                        <Label className="font-normal text-neutral-200">Password*</Label>
                         <FormControl>
                           <Input
                             {...field}
                             type="password"
-                            placeholder="Password*"
+                            placeholder="••••••••"
                             disabled={isPending}
                           />
                         </FormControl>
@@ -216,10 +212,11 @@ export default function SignupInvestor() {
                     name="fiscalCode"
                     render={({ field }) => (
                       <FormItem>
+                        <Label className="font-normal text-neutral-200">Fiscal Code*</Label>
                         <FormControl>
                           <Input
                             {...field}
-                            placeholder="Fiscal Code*"
+                            placeholder="Enter your fiscal code"
                             disabled={isPending}
                           />
                         </FormControl>
@@ -233,6 +230,7 @@ export default function SignupInvestor() {
                     name="mobileFone"
                     render={({ field }) => (
                       <FormItem>
+                        <Label className="font-normal text-neutral-200">Mobile Phone*</Label>
                         <FormControl>
                           <PhoneInput
                             {...field}
@@ -250,6 +248,7 @@ export default function SignupInvestor() {
                     name="birthDate"
                     render={({ field }) => (
                       <FormItem className="flex flex-col">
+                        <Label className="font-normal text-neutral-200">Birth Date*</Label>
                         <Popover>
                           <PopoverTrigger asChild>
                             <FormControl>
@@ -261,7 +260,7 @@ export default function SignupInvestor() {
                                   format(field.value, "PPP")
                                 ) : (
                                   <span className="font-normal text-[#E5E7EA]">
-                                    Birth Date*
+                                    Select date
                                   </span>
                                 )}
                                 <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
@@ -343,15 +342,16 @@ export default function SignupInvestor() {
                           name="investmentMaxValue"
                           render={({ field: maxField }) => (
                             <FormItem>
-                              <FormLabel className="text-white">
+                              <Label className="text-white">
                                 Investment Range
-                              </FormLabel>
+                              </Label>
                               <FormControl>
                                 <div className="space-y-4">
                                   <Slider
                                     min={2500}
                                     max={5000000}
                                     step={2500}
+                                    defaultValue={[2500, 5000000]}
                                     minStepsBetweenThumbs={1}
                                     value={[
                                       Number(minField.value || "2500"),
@@ -397,12 +397,13 @@ export default function SignupInvestor() {
                     name="investmentNetWorth"
                     render={({ field }) => (
                       <FormItem>
+                        <Label className="font-normal text-neutral-200">Net Worth*</Label>
                         <FormControl>
                           <Input
                             {...field}
                             type="number"
                             min={0}
-                            placeholder="Net Worth*"
+                            placeholder="Enter amount in USD"
                             disabled={isPending}
                           />
                         </FormControl>
@@ -416,12 +417,13 @@ export default function SignupInvestor() {
                     name="investmentAnnualIncome"
                     render={({ field }) => (
                       <FormItem>
+                        <Label className="font-normal text-neutral-200">Annual Income*</Label>
                         <FormControl>
                           <Input
                             {...field}
                             type="number"
                             min={0}
-                            placeholder="Annual Income*"
+                            placeholder="Enter amount in USD"
                             disabled={isPending}
                           />
                         </FormControl>
@@ -452,9 +454,9 @@ export default function SignupInvestor() {
                           />
                         </FormControl>
                         <div className="space-y-1 leading-none">
-                          <FormLabel>
+                          <Label>
                             I accept the terms and conditions
-                          </FormLabel>
+                          </Label>
                         </div>
                       </FormItem>
                     )}
@@ -473,9 +475,9 @@ export default function SignupInvestor() {
                           />
                         </FormControl>
                         <div className="space-y-1 leading-none">
-                          <FormLabel>
+                          <Label>
                             I accept the confidentiality agreement
-                          </FormLabel>
+                          </Label>
                         </div>
                       </FormItem>
                     )}
@@ -496,10 +498,11 @@ export default function SignupInvestor() {
                     name="referralToken"
                     render={({ field }) => (
                       <FormItem>
+                        <Label className="font-normal text-neutral-200">Referral Token (optional)</Label>
                         <FormControl>
                           <Input
                             {...field}
-                            placeholder="Referral Token (optional)"
+                            placeholder="8AC7SHAS"
                             disabled={isPending}
                           />
                         </FormControl>
