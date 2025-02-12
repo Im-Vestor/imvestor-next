@@ -70,12 +70,13 @@ export default function Login() {
                     type="email"
                     required
                     placeholder="example@email.com"
-                    className="bg-[#282B37] p-4 placeholder:text-white"
                     disabled={isPending}
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label className="font-normal text-neutral-200">Password*</Label>
+                  <Label className="font-normal text-neutral-200">
+                    Password*
+                  </Label>
                   <Input
                     onChange={(e) => setPassword(e.target.value)}
                     value={password}
@@ -84,7 +85,6 @@ export default function Login() {
                     type="password"
                     required
                     placeholder="••••••••"
-                    className="bg-[#282B37] p-4 placeholder:text-white"
                     disabled={isPending}
                   />
                 </div>
