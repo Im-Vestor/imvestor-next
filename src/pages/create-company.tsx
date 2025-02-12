@@ -23,9 +23,26 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "~/components/ui/popover";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "~/components/ui/select";
 import { Textarea } from "~/components/ui/textarea";
 import { projectApi } from "~/lib/api";
 import { cn } from "~/lib/utils";
+
+const COMPANY_STAGES = [
+  "Pre-seed",
+  "Seed",
+  "Serie A",
+  "Serie B",
+  "Serie C",
+  "Serie D",
+  "IPO",
+];
 
 const companyFormSchema = z.object({
   companyName: z.string().min(2, "Company name must be at least 2 characters"),
@@ -38,7 +55,10 @@ const companyFormSchema = z.object({
   companyStage: z.string().min(2, "Company stage is required"),
   country: z.string().min(2, "Country is required"),
   city: z.string().min(2, "City is required"),
-  about: z.string().min(10, "About must be at least 10 characters").max(280, "About must be at most 280 characters"),
+  about: z
+    .string()
+    .min(10, "About must be at least 10 characters")
+    .max(280, "About must be at most 280 characters"),
   startInvestment: z.string().min(1, "Start investment is required"),
   investorsSlots: z.string().min(1, "Investors slots is required"),
   annualRevenue: z.string().min(1, "Annual revenue is required"),
@@ -321,7 +341,23 @@ export default function CreateCompany() {
                   render={({ field }) => (
                     <FormItem>
                       <FormControl>
-                        <Input placeholder="Company Stage*" {...field} />
+                        <Select
+                          value={field.value}
+                          onValueChange={(value: string) => {
+                            field.onChange(value);
+                          }}
+                        >
+                          <SelectTrigger>
+                            <SelectValue placeholder="Company Stage*" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {COMPANY_STAGES.map((stage) => (
+                              <SelectItem key={stage} value={stage}>
+                                {stage}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -474,7 +510,10 @@ export default function CreateCompany() {
                           render={({ field }) => (
                             <FormItem className="w-11/12">
                               <FormControl>
-                                <Input placeholder={`Question ${index + 1}`} {...field} />
+                                <Input
+                                  placeholder={`Question ${index + 1}`}
+                                  {...field}
+                                />
                               </FormControl>
                               <FormMessage />
                             </FormItem>
@@ -485,7 +524,8 @@ export default function CreateCompany() {
                           variant="ghost"
                           size="sm"
                           onClick={() => {
-                            const currentFaq = form.getValues("companyFaq") ?? [];
+                            const currentFaq =
+                              form.getValues("companyFaq") ?? [];
                             form.setValue(
                               "companyFaq",
                               currentFaq.filter((_, i) => i !== index),
@@ -501,7 +541,10 @@ export default function CreateCompany() {
                         render={({ field }) => (
                           <FormItem className="w-11/12">
                             <FormControl>
-                              <Input placeholder={`Answer ${index + 1}`} {...field} />
+                              <Input
+                                placeholder={`Answer ${index + 1}`}
+                                {...field}
+                              />
                             </FormControl>
                             <FormMessage />
                           </FormItem>
@@ -534,7 +577,14 @@ export default function CreateCompany() {
                   Cancel
                 </Button>
                 <Button className="w-1/3" type="submit" disabled={isPending}>
-                  {isPending ? "Saving..." : <div className="flex items-center gap-2"><span>Save</span><ArrowRight className="h-4 w-4" /></div>}
+                  {isPending ? (
+                    "Saving..."
+                  ) : (
+                    <div className="flex items-center gap-2">
+                      <span>Save</span>
+                      <ArrowRight className="h-4 w-4" />
+                    </div>
+                  )}
                 </Button>
               </div>
             </div>

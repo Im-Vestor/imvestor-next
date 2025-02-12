@@ -400,6 +400,8 @@ export default function SignupInvestor() {
                         <FormControl>
                           <Input
                             {...field}
+                            type="number"
+                            min={0}
                             placeholder="Net Worth*"
                             disabled={isPending}
                           />
@@ -417,6 +419,8 @@ export default function SignupInvestor() {
                         <FormControl>
                           <Input
                             {...field}
+                            type="number"
+                            min={0}
                             placeholder="Annual Income*"
                             disabled={isPending}
                           />
