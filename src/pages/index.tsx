@@ -73,7 +73,7 @@ export default function Home() {
                     alt="Imvestor"
                     width={240}
                     height={240}
-                    onClick={() => setIsVideoPlaying(true)}
+                    onMouseEnter={() => setIsVideoPlaying(true)}
                   />
                 </div>
               )}
