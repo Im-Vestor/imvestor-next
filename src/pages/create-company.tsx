@@ -1,9 +1,10 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { format } from "date-fns";
 import { ArrowRight, CalendarIcon, PlusIcon, Trash2Icon } from "lucide-react";
 import Image from "next/image";
 import { useRouter } from "next/router";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
@@ -32,8 +33,9 @@ import {
   SelectValue,
 } from "~/components/ui/select";
 import { Textarea } from "~/components/ui/textarea";
-import { projectApi } from "~/lib/api";
+import { type Country, countryAndStateApi, projectApi } from "~/lib/api";
 import { cn } from "~/lib/utils";
+import { fileToBase64 } from "~/utils/base64";
 
 const COMPANY_STAGES = [
   "Pre-seed",
@@ -47,21 +49,27 @@ const COMPANY_STAGES = [
 
 const companyFormSchema = z.object({
   companyName: z.string().min(2, "Company name must be at least 2 characters"),
+  banner: z.object({
+    name: z.string(),
+    type: z.string(),
+    size: z.number(),
+    base64: z.string(),
+  }).optional(),
   quickSolution: z
     .string()
     .min(10, "Quick solution must be at least 10 characters"),
-  website: z.string().url().optional(),
+  webSite: z.string().optional(),
   foundationDate: z.date(),
   companySector: z.string().min(2, "Company sector is required"),
   companyStage: z.string().min(2, "Company stage is required"),
-  country: z.string().min(2, "Country is required"),
-  city: z.string().min(2, "City is required"),
+  country: z.string().min(1, "Country is required"),
+  city: z.string().min(1, "State is required"),
   about: z
     .string()
     .min(10, "About must be at least 10 characters")
     .max(280, "About must be at most 280 characters"),
   startInvestment: z.string().min(1, "Start investment is required"),
-  investorsSlots: z.string().min(1, "Investors slots is required"),
+  investorSlots: z.string().min(1, "Investors slots is required"),
   annualRevenue: z.string().min(1, "Annual revenue is required"),
   investmentGoal: z.string().min(1, "Investment goal is required"),
   equity: z.string().optional(),
@@ -73,19 +81,27 @@ const companyFormSchema = z.object({
       }),
     )
     .optional(),
-  logo: z.instanceof(File).optional(),
 });
 
 type CompanyFormValues = z.infer<typeof companyFormSchema>;
 
 export default function CreateCompany() {
   const router = useRouter();
+  const [countries, setCountries] = useState<Country[]>([]);
+  const [states, setStates] = useState<string[]>([]);
+  const [isLoadingStates, setIsLoadingStates] = useState(false);
   const form = useForm<CompanyFormValues>({
     resolver: zodResolver(companyFormSchema),
     defaultValues: {
       companyName: "",
+      banner: {
+        name: "",
+        type: "",
+        size: 0,
+        base64: "",
+      },
       quickSolution: "",
-      website: "",
+      webSite: "",
       foundationDate: new Date(),
       companySector: "",
       companyStage: "",
@@ -93,7 +109,7 @@ export default function CreateCompany() {
       city: "",
       about: "",
       startInvestment: "",
-      investorsSlots: "",
+      investorSlots: "",
       annualRevenue: "",
       investmentGoal: "",
       equity: "",
@@ -106,8 +122,14 @@ export default function CreateCompany() {
       // First create the project
       const response = await projectApi.createProject({
         name: data.companyName,
+        banner: {
+          name: data.banner?.name ?? "",
+          type: data.banner?.type ?? "image/jpeg",
+          size: data.banner?.size.toString() ?? "",
+          base64: data.banner?.base64 ?? "",
+        },
         quickSolution: data.quickSolution,
-        website: data.website ?? undefined,
+        webSite: data.webSite ?? undefined,
         foundationDate: data.foundationDate.toISOString(),
         companySector: data.companySector,
         companyStage: data.companyStage,
@@ -115,42 +137,12 @@ export default function CreateCompany() {
         city: data.city,
         about: data.about,
         startInvestment: data.startInvestment,
-        investorsSlots: parseInt(data.investorsSlots),
+        investorSlots: parseInt(data.investorSlots),
         annualRevenue: data.annualRevenue,
         investmentGoal: data.investmentGoal,
         equity: data.equity,
         companyFaq: data.companyFaq ?? [],
       });
-
-      // If there's a logo, upload it
-      if (data.logo) {
-        const reader = new FileReader();
-        reader.readAsDataURL(data.logo);
-
-        await new Promise<void>((resolve, reject) => {
-          reader.onload = async () => {
-            try {
-              const base64String = (reader.result as string).split(",")[1];
-              if (!base64String) {
-                throw new Error("Failed to convert file to base64");
-              }
-
-              await projectApi.uploadFile({
-                idProject: response.id,
-                name: data.logo!.name,
-                type: data.logo!.type ?? "image/jpeg",
-                size: data.logo!.size.toString(),
-                base64: base64String,
-              });
-              resolve();
-            } catch (error) {
-              reject(error instanceof Error ? error : new Error(String(error)));
-            }
-          };
-          reader.onerror = () =>
-            reject(new Error(reader.error?.message ?? "Failed to read file"));
-        });
-      }
 
       return response;
     },
@@ -160,9 +152,31 @@ export default function CreateCompany() {
     },
     onError: (error) => {
       toast.error("Failed to create company. Please try again.");
-      console.error("Create company error:", error);
+      console.error("Create company error:", error instanceof Error ? error.message : "Unknown error");
     },
   });
+
+  useQuery({
+    queryKey: ["countries"],
+    queryFn: async () => {
+      const response = await countryAndStateApi.getCountryList();
+      setCountries(response);
+    },
+  });
+
+  const fetchStates = async (countryId: string) => {
+    try {
+      setIsLoadingStates(true);
+      const response = await countryAndStateApi.getStateList(parseInt(countryId));
+      setStates(response);
+    } catch (error) {
+      console.error("Error fetching states:", error instanceof Error ? error.message : "Unknown error");
+      toast.error("Failed to load states");
+      setStates([]);
+    } finally {
+      setIsLoadingStates(false);
+    }
+  };
 
   function onSubmit(data: CompanyFormValues) {
     createCompany(data);
@@ -179,7 +193,7 @@ export default function CreateCompany() {
 
               <FormField
                 control={form.control}
-                name="logo"
+                name="banner"
                 render={({ field: { onChange, value, ...field } }) => (
                   <FormItem>
                     <FormControl>
@@ -191,18 +205,25 @@ export default function CreateCompany() {
                             onChange={(e) => {
                               const file = e.target.files?.[0];
                               if (file) {
-                                onChange(file);
+                                void fileToBase64(file).then((base64) => {
+                                  onChange({
+                                    name: file.name,
+                                    type: file.type,
+                                    size: file.size,
+                                    base64,
+                                  });
+                                });
                               }
                             }}
                             className="absolute inset-0 cursor-pointer opacity-0"
                             {...field}
                           />
                           <div className="flex h-full w-full items-center justify-center rounded-full bg-[#D1D5DC]">
-                            {value ? (
+                            {value?.base64 ? (
                               <Image
-                                src={URL.createObjectURL(value)}
+                                src={`data:${value.type};base64,${value.base64}`}
                                 alt="Logo preview"
-                                className="h-full w-full object-cover"
+                                className="h-full w-full object-cover rounded-md"
                                 width={100}
                                 height={100}
                               />
@@ -262,10 +283,10 @@ export default function CreateCompany() {
 
               <FormField
                 control={form.control}
-                name="website"
+                name="webSite"
                 render={({ field }) => (
                   <FormItem>
-                    <Label className="font-normal text-neutral-200">Website</Label>
+                    <Label className="font-normal text-neutral-200">Website (optional)</Label>
                     <FormControl>
                       <Input
                         className="w-1/2"
@@ -283,7 +304,7 @@ export default function CreateCompany() {
                 control={form.control}
                 name="foundationDate"
                 render={({ field }) => (
-                  <FormItem>
+                  <FormItem className="flex flex-col gap-2">
                     <Label className="font-normal text-neutral-200">Foundation Date*</Label>
                     <FormControl>
                       <Popover>
@@ -310,14 +331,14 @@ export default function CreateCompany() {
                           align="start"
                         >
                           <Calendar
-                            mode="single"
-                            selected={field.value}
-                            onSelect={field.onChange}
-                            disabled={(date) =>
-                              date > new Date() || date < new Date("1900-01-01")
-                            }
-                            initialFocus
-                          />
+                              mode="single"
+                              captionLayout="dropdown"
+                              showOutsideDays={false}
+                              selected={field.value}
+                              onSelect={field.onChange}
+                              fromYear={1930}
+                              toYear={2025}
+                            />
                         </PopoverContent>
                       </Popover>
                     </FormControl>
@@ -380,7 +401,28 @@ export default function CreateCompany() {
                     <FormItem>
                       <Label className="font-normal text-neutral-200">Country*</Label>
                       <FormControl>
-                        <Input placeholder="Enter country" {...field} />
+                        <Select
+                          value={field.value}
+                          onValueChange={(value: string) => {
+                            field.onChange(value);
+                            void fetchStates(value);
+                            form.setValue("city", "");
+                          }}
+                        >
+                          <SelectTrigger>
+                            <SelectValue placeholder="Country*" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {countries.map((country) => (
+                              <SelectItem
+                                key={country.id}
+                                value={country.id.toString()}
+                              >
+                                {country.name}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -392,9 +434,24 @@ export default function CreateCompany() {
                   name="city"
                   render={({ field }) => (
                     <FormItem>
-                      <Label className="font-normal text-neutral-200">City*</Label>
+                      <Label className="font-normal text-neutral-200">State*</Label>
                       <FormControl>
-                        <Input placeholder="Enter city" {...field} />
+                        <Select
+                          value={field.value}
+                          onValueChange={(value: string) => field.onChange(value)}
+                          disabled={!form.getValues("country") || isLoadingStates}
+                        >
+                          <SelectTrigger>
+                            <SelectValue placeholder="State*" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {states.map((state) => (
+                              <SelectItem key={state} value={state}>
+                                {state}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -439,7 +496,7 @@ export default function CreateCompany() {
 
                 <FormField
                   control={form.control}
-                  name="investorsSlots"
+                  name="investorSlots"
                   render={({ field }) => (
                     <FormItem>
                       <Label className="font-normal text-neutral-200">Investors Slots*</Label>

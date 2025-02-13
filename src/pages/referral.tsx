@@ -159,7 +159,7 @@ export default function Referral() {
                 {ref.name}
               </div>
               <div className="text-center text-lg text-white">
-                Joined Sep 16th, 2022
+                Joined {ref.joined}
               </div>
             </div>
           ))}

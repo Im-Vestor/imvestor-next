@@ -102,6 +102,7 @@ export interface ReferralDetails {
   total: number;
   references: Array<{
     name: string;
+    joined: string;
   }>;
 }
 
@@ -205,9 +206,15 @@ export const areasApi = {
 
 interface ProjectResponse {
   id: number;
+  banner: {
+    name: string;
+    type: string;
+    size: string;
+    base64: string;
+  };
   name: string;
   quickSolution: string;
-  website?: string;
+  webSite?: string;
   foundationDate: string;
   companySector: string;
   companyStage: string;
@@ -215,7 +222,7 @@ interface ProjectResponse {
   city: string;
   about: string;
   startInvestment: string;
-  investorsSlots: number;
+  investorSlots: number;
   annualRevenue: string;
   investmentGoal: string;
   equity: string | undefined
