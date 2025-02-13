@@ -53,7 +53,9 @@ export default function SignupEntrepreneur() {
       password: "",
       fiscalCode: "",
       mobileFone: "",
-      birthDate: undefined,
+      birthDate: new Date(
+        new Date().setFullYear(new Date().getFullYear() - 18),
+      ),
       skills: [],
       referralToken: "",
     },
@@ -200,13 +202,12 @@ export default function SignupEntrepreneur() {
                           >
                             <Calendar
                               mode="single"
+                              captionLayout="dropdown"
+                              showOutsideDays={false}
                               selected={field.value}
                               onSelect={field.onChange}
-                              disabled={(date) =>
-                                date > new Date() ||
-                                date < new Date("1900-01-01")
-                              }
-                              initialFocus
+                              fromYear={1930}
+                              toYear={2007}
                             />
                           </PopoverContent>
                         </Popover>
@@ -335,7 +336,8 @@ export default function SignupEntrepreneur() {
                 disabled={isPending || !form.formState.isValid}
                 onClick={async () => {
                   if (step === 2) await createEntrepreneur(form.getValues());
-                  setStep(step + 1);
+
+                  if (step !== 2) setStep(step + 1);
                 }}
               >
                 {step === 3

@@ -74,7 +74,9 @@ export default function SignupInvestor() {
       investmentMaxValue: "",
       investmentNetWorth: "",
       investmentAnnualIncome: "",
-      birthDate: undefined,
+      birthDate: new Date(
+        new Date().setFullYear(new Date().getFullYear() - 18),
+      ),
       areas: [],
       referralToken: (router.query.referralToken as string) ?? "",
       acceptTerms: false,
@@ -273,13 +275,12 @@ export default function SignupInvestor() {
                           >
                             <Calendar
                               mode="single"
+                              captionLayout="dropdown"
+                              showOutsideDays={false}
                               selected={field.value}
                               onSelect={field.onChange}
-                              disabled={(date) =>
-                                date > new Date() ||
-                                date < new Date("1900-01-01")
-                              }
-                              initialFocus
+                              fromYear={1930}
+                              toYear={2007}
                             />
                           </PopoverContent>
                         </Popover>
@@ -578,7 +579,7 @@ export default function SignupInvestor() {
                       break;
                   }
 
-                  if (isValid) {
+                  if (isValid && step !== 5) {
                     setStep(step + 1);
                   } else {
                     console.error("Invalid form");
