@@ -259,7 +259,7 @@ export default function Profile() {
 
   const renderBannerUpload = (currentBanner: string | null) => (
     <div className="relative mb-8 w-full">
-      <div className="h-48 w-full overflow-hidden bg-[#282B37]">
+      <div className="h-48 w-full overflow-hidden rounded-t-lg bg-[#282B37]">
         {currentBanner && (
           <Image
             src={currentBanner}
@@ -297,7 +297,7 @@ export default function Profile() {
             onSubmit={entrepreneurForm.handleSubmit((data) =>
               updateEntrepreneur(data),
             )}
-            className="space-y-4 rounded-lg border-2 border-white/10 bg-[#242630] px-6"
+            className="space-y-4 rounded-lg border-2 border-white/10 bg-[#242630]"
           >
             {renderBannerUpload(data.banner)}
 
@@ -307,13 +307,15 @@ export default function Profile() {
               </div>
             </div>
 
-            <div className="grid grid-cols-2 gap-4 pt-8">
+            <div className="mx-6 grid grid-cols-1 gap-4 pt-2 md:grid-cols-2">
               <FormField
                 control={entrepreneurForm.control}
                 name="firstName"
                 render={({ field }) => (
                   <FormItem>
-                    <Label className="font-normal text-neutral-200">First Name*</Label>
+                    <Label className="font-normal text-neutral-200">
+                      First Name*
+                    </Label>
                     <FormControl>
                       <Input
                         placeholder="John"
@@ -331,7 +333,9 @@ export default function Profile() {
                 name="lastName"
                 render={({ field }) => (
                   <FormItem>
-                    <Label className="font-normal text-neutral-200">Last Name*</Label>
+                    <Label className="font-normal text-neutral-200">
+                      Last Name*
+                    </Label>
                     <FormControl>
                       <Input
                         placeholder="Doe"
@@ -345,13 +349,15 @@ export default function Profile() {
               />
             </div>
 
-            <div className="grid grid-cols-2 gap-4">
+            <div className="mx-6 grid grid-cols-1 gap-4 pt-2 md:grid-cols-2">
               <FormField
                 control={entrepreneurForm.control}
                 name="fiscalCode"
                 render={({ field }) => (
                   <FormItem>
-                    <Label className="font-normal text-neutral-200">Fiscal Code*</Label>
+                    <Label className="font-normal text-neutral-200">
+                      Fiscal Code*
+                    </Label>
                     <FormControl>
                       <Input
                         placeholder="01234567890"
@@ -369,11 +375,12 @@ export default function Profile() {
                 name="mobileFone"
                 render={({ field }) => (
                   <FormItem>
-                    <Label className="font-normal text-neutral-200">Mobile Phone*</Label>
+                    <Label className="font-normal text-neutral-200">
+                      Mobile Phone*
+                    </Label>
                     <FormControl>
                       <PhoneInput
                         {...field}
-                        className="bg-[#181920] text-white"
                         placeholder="999 999 999"
                         disabled={isUpdatingEntrepreneur}
                       />
@@ -384,13 +391,15 @@ export default function Profile() {
               />
             </div>
 
-            <div className="grid grid-cols-2 gap-4">
+            <div className="mx-6 grid grid-cols-1 gap-4 pt-2 md:grid-cols-2">
               <FormField
                 control={entrepreneurForm.control}
                 name="country"
                 render={({ field }) => (
                   <FormItem>
-                    <Label className="font-normal text-neutral-200">Country*</Label>
+                    <Label className="font-normal text-neutral-200">
+                      Country*
+                    </Label>
                     <FormControl>
                       <Select
                         value={field.value}
@@ -425,7 +434,9 @@ export default function Profile() {
                 name="city"
                 render={({ field }) => (
                   <FormItem>
-                    <Label className="font-normal text-neutral-200">State*</Label>
+                    <Label className="font-normal text-neutral-200">
+                      State*
+                    </Label>
                     <FormControl>
                       <Select
                         value={field.value}
@@ -454,13 +465,15 @@ export default function Profile() {
               />
             </div>
 
-            <div className="grid grid-cols-2 gap-4">
+            <div className="mx-6 grid grid-cols-1 gap-4 pt-2 md:grid-cols-2">
               <FormField
                 control={entrepreneurForm.control}
                 name="companyName"
                 render={({ field }) => (
                   <FormItem>
-                    <Label className="font-normal text-neutral-200">Company Name*</Label>
+                    <Label className="font-normal text-neutral-200">
+                      Company Name*
+                    </Label>
                     <FormControl>
                       <Input
                         placeholder="Acme Inc."
@@ -478,7 +491,9 @@ export default function Profile() {
                 name="companyRole"
                 render={({ field }) => (
                   <FormItem>
-                    <Label className="font-normal text-neutral-200">Role*</Label>
+                    <Label className="font-normal text-neutral-200">
+                      Role*
+                    </Label>
                     <FormControl>
                       <Input
                         placeholder="CEO"
@@ -492,25 +507,29 @@ export default function Profile() {
               />
             </div>
 
-            <FormField
-              control={entrepreneurForm.control}
-              name="about"
-              render={({ field }) => (
-                <FormItem>
-                  <Label className="font-normal text-neutral-200">About me</Label>
-                  <FormControl>
-                    <Textarea
-                      placeholder="I'm a startup founder..."
-                      {...field}
-                      disabled={isUpdatingEntrepreneur}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+            <div className="mx-6">
+              <FormField
+                control={entrepreneurForm.control}
+                name="about"
+                render={({ field }) => (
+                  <FormItem>
+                    <Label className="font-normal text-neutral-200">
+                      About me
+                    </Label>
+                    <FormControl>
+                      <Textarea
+                        placeholder="I'm a startup founder..."
+                        {...field}
+                        disabled={isUpdatingEntrepreneur}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
 
-            <div className="flex justify-end gap-4 pb-8 pt-8">
+            <div className="mx-6 flex justify-end gap-4 pb-8 pt-8">
               <Button
                 variant="secondary"
                 disabled={isUpdatingEntrepreneur}
@@ -595,13 +614,15 @@ export default function Profile() {
               </div>
             </div>
 
-            <div className="mx-6 grid grid-cols-2 gap-4 pt-8">
+            <div className="mx-6 grid grid-cols-1 gap-4 pt-8 md:grid-cols-2">
               <FormField
                 control={investorForm.control}
                 name="firstName"
                 render={({ field }) => (
                   <FormItem>
-                    <Label className="font-normal text-neutral-200">First Name*</Label>
+                    <Label className="font-normal text-neutral-200">
+                      First Name*
+                    </Label>
                     <FormControl>
                       <Input
                         placeholder="John"
@@ -619,7 +640,9 @@ export default function Profile() {
                 name="lastName"
                 render={({ field }) => (
                   <FormItem>
-                    <Label className="font-normal text-neutral-200">Last Name*</Label>
+                    <Label className="font-normal text-neutral-200">
+                      Last Name*
+                    </Label>
                     <FormControl>
                       <Input
                         placeholder="Doe"
@@ -633,13 +656,15 @@ export default function Profile() {
               />
             </div>
 
-            <div className="mx-6 grid grid-cols-2 gap-4">
+            <div className="mx-6 grid grid-cols-1 gap-4 pt-2 md:grid-cols-2">
               <FormField
                 control={investorForm.control}
                 name="fiscalCode"
                 render={({ field }) => (
                   <FormItem>
-                    <Label className="font-normal text-neutral-200">Fiscal Code*</Label>
+                    <Label className="font-normal text-neutral-200">
+                      Fiscal Code*
+                    </Label>
                     <FormControl>
                       <Input
                         placeholder="01234567890"
@@ -657,11 +682,12 @@ export default function Profile() {
                 name="mobileFone"
                 render={({ field }) => (
                   <FormItem>
-                    <Label className="font-normal text-neutral-200">Mobile Phone*</Label>
+                    <Label className="font-normal text-neutral-200">
+                      Mobile Phone*
+                    </Label>
                     <FormControl>
                       <PhoneInput
                         {...field}
-                        className="bg-[#181920] text-white"
                         placeholder="999 999 999"
                         disabled={isUpdatingInvestor}
                       />
@@ -672,13 +698,15 @@ export default function Profile() {
               />
             </div>
 
-            <div className="mx-6 grid grid-cols-2 gap-4">
+            <div className="mx-6 grid grid-cols-1 gap-4 pt-2 md:grid-cols-2">
               <FormField
                 control={investorForm.control}
                 name="country"
                 render={({ field }) => (
                   <FormItem>
-                    <Label className="font-normal text-neutral-200">Country*</Label>
+                    <Label className="font-normal text-neutral-200">
+                      Country*
+                    </Label>
                     <FormControl>
                       <Select
                         value={field.value}
@@ -713,7 +741,9 @@ export default function Profile() {
                 name="city"
                 render={({ field }) => (
                   <FormItem>
-                    <Label className="font-normal text-neutral-200">State*</Label>
+                    <Label className="font-normal text-neutral-200">
+                      State*
+                    </Label>
                     <FormControl>
                       <Select
                         value={field.value}
@@ -748,7 +778,9 @@ export default function Profile() {
                 name="about"
                 render={({ field }) => (
                   <FormItem>
-                    <Label className="font-normal text-neutral-200">About me</Label>
+                    <Label className="font-normal text-neutral-200">
+                      About me
+                    </Label>
                     <FormControl>
                       <Textarea
                         placeholder="I'm a Venture Capitalist..."

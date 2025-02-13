@@ -86,7 +86,6 @@ export interface RegisterEntrepreneurRequest {
   lastName: string;
   email: string;
   password: string;
-  fiscalCode: string;
   mobileFone: string;
   birthDate: string;
   skills: number[];
@@ -112,7 +111,6 @@ export interface RegisterInvestorRequest {
   email: string;
   password: string;
   mobileFone: string;
-  fiscalCode: string;
   city: string;
   country: string;
   investmentMinValue: string;

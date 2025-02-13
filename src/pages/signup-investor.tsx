@@ -34,8 +34,8 @@ const formSchema = z.object({
   lastName: z.string().min(2, "Last name must be at least 2 characters"),
   email: z.string().email("Invalid email address"),
   password: z.string().min(8, "Password must be at least 8 characters"),
+  confirmPassword: z.string(),
   mobileFone: z.string().min(1, "Mobile phone is required"),
-  fiscalCode: z.string().min(1, "Fiscal code is required"),
   city: z.string().min(1, "City is required"),
   country: z.string().min(1, "Country is required"),
   investmentMinValue: z.string().min(1, "Minimum investment value is required"),
@@ -53,6 +53,9 @@ const formSchema = z.object({
   acceptConfidentiality: z.boolean().refine((val) => val === true, {
     message: "You must accept the confidentiality agreement",
   }),
+}).refine((data) => data.password === data.confirmPassword, {
+  message: "Passwords don't match",
+  path: ["confirmPassword"],
 });
 
 export default function SignupInvestor() {
@@ -66,8 +69,8 @@ export default function SignupInvestor() {
       lastName: "",
       email: "",
       password: "",
+      confirmPassword: "",
       mobileFone: "",
-      fiscalCode: "",
       city: "",
       country: "",
       investmentMinValue: "",
@@ -211,14 +214,15 @@ export default function SignupInvestor() {
 
                   <FormField
                     control={form.control}
-                    name="fiscalCode"
+                    name="confirmPassword"
                     render={({ field }) => (
                       <FormItem>
-                        <Label className="font-normal text-neutral-200">Fiscal Code*</Label>
+                        <Label className="font-normal text-neutral-200">Confirm Password*</Label>
                         <FormControl>
                           <Input
                             {...field}
-                            placeholder="Enter your fiscal code"
+                            type="password"
+                            placeholder="••••••••"
                             disabled={isPending}
                           />
                         </FormControl>
@@ -543,15 +547,14 @@ export default function SignupInvestor() {
 
                   switch (step) {
                     case 1:
-                      isValid = await form.trigger([
-                        "firstName",
-                        "lastName",
-                        "email",
-                        "password",
-                        "fiscalCode",
-                        "mobileFone",
-                        "birthDate",
-                      ]);
+                        isValid = await form.trigger([
+                          "firstName",
+                          "lastName",
+                          "email",
+                          "password",
+                          "mobileFone",
+                          "birthDate",
+                        ]);
                       break;
                     case 2:
                       isValid = await form.trigger("areas");

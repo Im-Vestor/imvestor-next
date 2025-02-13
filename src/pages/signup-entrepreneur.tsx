@@ -31,13 +31,16 @@ const formSchema = z.object({
   lastName: z.string().min(2, "Last name must be at least 2 characters"),
   email: z.string().email("Invalid email address"),
   password: z.string().min(8, "Password must be at least 8 characters"),
-  fiscalCode: z.string().min(1, "Fiscal code is required"),
+  confirmPassword: z.string(),
   mobileFone: z.string().min(1, "Mobile phone is required"),
   birthDate: z.date({
     required_error: "Birth date is required",
   }),
   skills: z.array(z.number()).default([]),
   referralToken: z.string().optional(),
+}).refine((data) => data.password === data.confirmPassword, {
+  message: "Passwords don't match",
+  path: ["confirmPassword"],
 });
 
 export default function SignupEntrepreneur() {
@@ -51,7 +54,7 @@ export default function SignupEntrepreneur() {
       lastName: "",
       email: "",
       password: "",
-      fiscalCode: "",
+      confirmPassword: "",
       mobileFone: "",
       birthDate: new Date(
         new Date().setFullYear(new Date().getFullYear() - 18),
@@ -260,16 +263,17 @@ export default function SignupEntrepreneur() {
 
                   <FormField
                     control={form.control}
-                    name="fiscalCode"
+                    name="confirmPassword"
                     render={({ field }) => (
                       <FormItem>
                         <Label className="font-normal text-neutral-200">
-                          Fiscal Code*
+                          Confirm Password*
                         </Label>
                         <FormControl>
                           <Input
                             {...field}
-                            placeholder="Enter your fiscal code"
+                            type="password"
+                            placeholder="••••••••"
                             disabled={isPending}
                           />
                         </FormControl>

@@ -90,6 +90,18 @@ export default function Login() {
                 </div>
               </div>
 
+              <div className="flex justify-end">
+                <Link href="/forgot-password">
+                  <Button
+                    variant="link"
+                    className="h-6 font-normal text-neutral-200"
+                    size="sm"
+                  >
+                    Forgot password?
+                  </Button>
+                </Link>
+              </div>
+
               <Button type="submit" className="w-full" disabled={isPending}>
                 {isPending ? (
                   "Logging in..."
