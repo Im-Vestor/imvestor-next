@@ -204,7 +204,7 @@ export const areasApi = {
   },
 };
 
-interface ProjectResponse {
+export interface ProjectResponse {
   id: number;
   banner: {
     name: string;
@@ -266,6 +266,10 @@ export const projectApi = {
   },
   uploadFile: async (data: UploadFileRequest) => {
     const response = await api.post<void>("/project/upload-file", data);
+    return response.data;
+  },
+  getProjects: async () => {
+    const response = await api.get<ProjectResponse[]>("/project");
     return response.data;
   },
 };

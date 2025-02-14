@@ -852,7 +852,7 @@ export default function Profile() {
   );
 
   return (
-    <main className="mx-auto min-h-screen max-w-4xl p-8">
+    <main className="mx-auto min-h-screen max-w-6xl p-8">
       <Header />
       <div className="mt-12">
         {profileData &&

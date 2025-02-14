@@ -21,6 +21,7 @@ export default function Login() {
       sessionStorage.setItem("accessToken", data.token);
       sessionStorage.setItem("refreshToken", data.refreshToken);
       sessionStorage.setItem("type", data.userType);
+      sessionStorage.setItem("email", email);
       await router.push("/profile");
     },
     onError: (error) => {

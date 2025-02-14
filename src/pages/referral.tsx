@@ -39,7 +39,7 @@ export default function Referral() {
 
   return (
     <>
-      <div className="relative">
+      <div className="relative min-h-screen">
         <div className="absolute -top-1/2 left-1/2 h-[800px] min-h-screen md:w-[1000px] w-[200px] -translate-x-1/2 transform rounded-full bg-white/5 blur-[128px]" />
 
         <main className="relative mx-4 md:mx-48 flex flex-col md:flex-row md:justify-between">
@@ -159,7 +159,7 @@ export default function Referral() {
                 {ref.name}
               </div>
               <div className="text-center text-lg text-white">
-                Joined {ref.joined}
+                {ref.joined}
               </div>
             </div>
           ))}

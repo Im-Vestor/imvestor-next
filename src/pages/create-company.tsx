@@ -1,7 +1,13 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { format } from "date-fns";
-import { ArrowRight, CalendarIcon, PlusIcon, Trash2Icon } from "lucide-react";
+import {
+  ArrowLeft,
+  ArrowRight,
+  CalendarIcon,
+  PlusIcon,
+  Trash2Icon,
+} from "lucide-react";
 import Image from "next/image";
 import { useRouter } from "next/router";
 import { useState } from "react";
@@ -49,12 +55,14 @@ const COMPANY_STAGES = [
 
 const companyFormSchema = z.object({
   companyName: z.string().min(2, "Company name must be at least 2 characters"),
-  banner: z.object({
-    name: z.string(),
-    type: z.string(),
-    size: z.number(),
-    base64: z.string(),
-  }).optional(),
+  banner: z
+    .object({
+      name: z.string(),
+      type: z.string(),
+      size: z.number(),
+      base64: z.string(),
+    })
+    .optional(),
   quickSolution: z
     .string()
     .min(10, "Quick solution must be at least 10 characters"),
@@ -130,7 +138,7 @@ export default function CreateCompany() {
         },
         quickSolution: data.quickSolution,
         webSite: data.webSite ?? undefined,
-        foundationDate: data.foundationDate.toISOString(),
+        foundationDate: data.foundationDate.toISOString().split("T")[0] ?? "",
         companySector: data.companySector,
         companyStage: data.companyStage,
         country: data.country,
@@ -152,7 +160,10 @@ export default function CreateCompany() {
     },
     onError: (error) => {
       toast.error("Failed to create company. Please try again.");
-      console.error("Create company error:", error instanceof Error ? error.message : "Unknown error");
+      console.error(
+        "Create company error:",
+        error instanceof Error ? error.message : "Unknown error",
+      );
     },
   });
 
@@ -167,10 +178,15 @@ export default function CreateCompany() {
   const fetchStates = async (countryId: string) => {
     try {
       setIsLoadingStates(true);
-      const response = await countryAndStateApi.getStateList(parseInt(countryId));
+      const response = await countryAndStateApi.getStateList(
+        parseInt(countryId),
+      );
       setStates(response);
     } catch (error) {
-      console.error("Error fetching states:", error instanceof Error ? error.message : "Unknown error");
+      console.error(
+        "Error fetching states:",
+        error instanceof Error ? error.message : "Unknown error",
+      );
       toast.error("Failed to load states");
       setStates([]);
     } finally {
@@ -183,14 +199,20 @@ export default function CreateCompany() {
   }
 
   return (
-    <main className="mx-auto min-h-screen max-w-4xl p-8">
+    <main className="mx-auto min-h-screen max-w-6xl p-8">
       <Header />
       <div className="mt-12">
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
             <div className="space-y-6 rounded-xl border-2 border-white/10 bg-gradient-to-b from-[#20212B] to-[#242834] px-16 py-8">
+              <button
+                type="button"
+                className="flex items-center gap-2 hover:opacity-75"
+                onClick={() => router.back()}
+              >
+                <ArrowLeft className="h-4 w-4" /> Back
+              </button>
               <h1 className="text-lg font-bold">Create Company</h1>
-
               <FormField
                 control={form.control}
                 name="banner"
@@ -223,7 +245,7 @@ export default function CreateCompany() {
                               <Image
                                 src={`data:${value.type};base64,${value.base64}`}
                                 alt="Logo preview"
-                                className="h-full w-full object-cover rounded-md"
+                                className="h-full w-full rounded-md object-cover"
                                 width={100}
                                 height={100}
                               />
@@ -252,13 +274,14 @@ export default function CreateCompany() {
                   </FormItem>
                 )}
               />
-
               <FormField
                 control={form.control}
                 name="companyName"
                 render={({ field }) => (
                   <FormItem>
-                    <Label className="font-normal text-neutral-200">Company Name*</Label>
+                    <Label className="font-normal text-neutral-200">
+                      Company Name*
+                    </Label>
                     <FormControl>
                       <Input placeholder="Enter company name" {...field} />
                     </FormControl>
@@ -266,27 +289,32 @@ export default function CreateCompany() {
                   </FormItem>
                 )}
               />
-
               <FormField
                 control={form.control}
                 name="quickSolution"
                 render={({ field }) => (
                   <FormItem>
-                    <Label className="font-normal text-neutral-200">Quick Solution*</Label>
+                    <Label className="font-normal text-neutral-200">
+                      Quick Solution*
+                    </Label>
                     <FormControl>
-                      <Textarea placeholder="Describe your solution" {...field} />
+                      <Textarea
+                        placeholder="Describe your solution"
+                        {...field}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
               />
-
               <FormField
                 control={form.control}
                 name="webSite"
                 render={({ field }) => (
                   <FormItem>
-                    <Label className="font-normal text-neutral-200">Website (optional)</Label>
+                    <Label className="font-normal text-neutral-200">
+                      Website (optional)
+                    </Label>
                     <FormControl>
                       <Input
                         className="w-1/2"
@@ -299,13 +327,14 @@ export default function CreateCompany() {
                   </FormItem>
                 )}
               />
-
               <FormField
                 control={form.control}
                 name="foundationDate"
                 render={({ field }) => (
                   <FormItem className="flex flex-col gap-2">
-                    <Label className="font-normal text-neutral-200">Foundation Date*</Label>
+                    <Label className="font-normal text-neutral-200">
+                      Foundation Date*
+                    </Label>
                     <FormControl>
                       <Popover>
                         <PopoverTrigger asChild>
@@ -331,14 +360,14 @@ export default function CreateCompany() {
                           align="start"
                         >
                           <Calendar
-                              mode="single"
-                              captionLayout="dropdown"
-                              showOutsideDays={false}
-                              selected={field.value}
-                              onSelect={field.onChange}
-                              fromYear={1930}
-                              toYear={2025}
-                            />
+                            mode="single"
+                            captionLayout="dropdown"
+                            showOutsideDays={false}
+                            selected={field.value}
+                            onSelect={field.onChange}
+                            fromYear={1930}
+                            toYear={2025}
+                          />
                         </PopoverContent>
                       </Popover>
                     </FormControl>
@@ -346,14 +375,15 @@ export default function CreateCompany() {
                   </FormItem>
                 )}
               />
-
               <div className="grid grid-cols-2 gap-4">
                 <FormField
                   control={form.control}
                   name="companySector"
                   render={({ field }) => (
                     <FormItem>
-                      <Label className="font-normal text-neutral-200">Company Sector*</Label>
+                      <Label className="font-normal text-neutral-200">
+                        Company Sector*
+                      </Label>
                       <FormControl>
                         <Input placeholder="e.g. Technology" {...field} />
                       </FormControl>
@@ -367,7 +397,9 @@ export default function CreateCompany() {
                   name="companyStage"
                   render={({ field }) => (
                     <FormItem>
-                      <Label className="font-normal text-neutral-200">Company Stage*</Label>
+                      <Label className="font-normal text-neutral-200">
+                        Company Stage*
+                      </Label>
                       <FormControl>
                         <Select
                           value={field.value}
@@ -392,14 +424,15 @@ export default function CreateCompany() {
                   )}
                 />
               </div>
-
               <div className="grid grid-cols-2 gap-4">
                 <FormField
                   control={form.control}
                   name="country"
                   render={({ field }) => (
                     <FormItem>
-                      <Label className="font-normal text-neutral-200">Country*</Label>
+                      <Label className="font-normal text-neutral-200">
+                        Country*
+                      </Label>
                       <FormControl>
                         <Select
                           value={field.value}
@@ -434,12 +467,18 @@ export default function CreateCompany() {
                   name="city"
                   render={({ field }) => (
                     <FormItem>
-                      <Label className="font-normal text-neutral-200">State*</Label>
+                      <Label className="font-normal text-neutral-200">
+                        State*
+                      </Label>
                       <FormControl>
                         <Select
                           value={field.value}
-                          onValueChange={(value: string) => field.onChange(value)}
-                          disabled={!form.getValues("country") || isLoadingStates}
+                          onValueChange={(value: string) =>
+                            field.onChange(value)
+                          }
+                          disabled={
+                            !form.getValues("country") || isLoadingStates
+                          }
                         >
                           <SelectTrigger>
                             <SelectValue placeholder="State*" />
@@ -458,33 +497,38 @@ export default function CreateCompany() {
                   )}
                 />
               </div>
-
               <FormField
                 control={form.control}
                 name="about"
                 render={({ field }) => (
                   <FormItem>
-                    <Label className="font-normal text-neutral-200">About Company*</Label>
+                    <Label className="font-normal text-neutral-200">
+                      About Company*
+                    </Label>
                     <FormControl>
-                      <Textarea placeholder="Tell us about your company" {...field} />
+                      <Textarea
+                        placeholder="Tell us about your company"
+                        {...field}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
               />
-
               <h3 className="mt-2 text-lg">Financial Requirements</h3>
-
               <div className="grid grid-cols-2 gap-4">
                 <FormField
                   control={form.control}
                   name="startInvestment"
                   render={({ field }) => (
                     <FormItem>
-                      <Label className="font-normal text-neutral-200">Start Investment*</Label>
+                      <Label className="font-normal text-neutral-200">
+                        Start Investment*
+                      </Label>
                       <FormControl>
                         <Input
                           type="number"
+                          min={0}
                           placeholder="Enter amount in USD"
                           {...field}
                         />
@@ -499,10 +543,13 @@ export default function CreateCompany() {
                   name="investorSlots"
                   render={({ field }) => (
                     <FormItem>
-                      <Label className="font-normal text-neutral-200">Investors Slots*</Label>
+                      <Label className="font-normal text-neutral-200">
+                        Investors Slots*
+                      </Label>
                       <FormControl>
                         <Input
                           type="number"
+                          min={0}
                           placeholder="Enter number of slots"
                           {...field}
                         />
@@ -512,17 +559,19 @@ export default function CreateCompany() {
                   )}
                 />
               </div>
-
               <div className="grid grid-cols-2 gap-4">
                 <FormField
                   control={form.control}
                   name="annualRevenue"
                   render={({ field }) => (
                     <FormItem>
-                      <Label className="font-normal text-neutral-200">Annual Revenue*</Label>
+                      <Label className="font-normal text-neutral-200">
+                        Annual Revenue*
+                      </Label>
                       <FormControl>
                         <Input
                           type="number"
+                          min={0}
                           placeholder="Enter amount in USD"
                           {...field}
                         />
@@ -537,10 +586,13 @@ export default function CreateCompany() {
                   name="equity"
                   render={({ field }) => (
                     <FormItem>
-                      <Label className="font-normal text-neutral-200">Equity</Label>
+                      <Label className="font-normal text-neutral-200">
+                        Equity
+                      </Label>
                       <FormControl>
                         <Input
                           type="number"
+                          min={0}
                           placeholder="Enter equity percentage"
                           {...field}
                         />
@@ -550,16 +602,18 @@ export default function CreateCompany() {
                   )}
                 />
               </div>
-
               <FormField
                 control={form.control}
                 name="investmentGoal"
                 render={({ field }) => (
                   <FormItem>
-                    <Label className="font-normal text-neutral-200">Investment Goal*</Label>
+                    <Label className="font-normal text-neutral-200">
+                      Investment Goal*
+                    </Label>
                     <FormControl>
                       <Input
                         type="number"
+                        min={0}
                         placeholder="Enter amount in USD"
                         {...field}
                       />
@@ -568,9 +622,7 @@ export default function CreateCompany() {
                   </FormItem>
                 )}
               />
-
               <h3 className="mt-2 text-lg">Company FAQ</h3>
-
               <div className="space-y-4">
                 {form.watch("companyFaq")?.map((_, index) => (
                   <div key={index}>
@@ -639,7 +691,6 @@ export default function CreateCompany() {
                   <PlusIcon className="h-4 w-4" /> Add Question
                 </Button>
               </div>
-
               <div className="flex justify-end gap-4">
                 <Button
                   type="button"
