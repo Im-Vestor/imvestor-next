@@ -1,5 +1,5 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation } from "@tanstack/react-query";
 import { format } from "date-fns";
 import {
   ArrowLeft,
@@ -39,7 +39,8 @@ import {
   SelectValue,
 } from "~/components/ui/select";
 import { Textarea } from "~/components/ui/textarea";
-import { type Country, countryAndStateApi, projectApi } from "~/lib/api";
+import { countries } from "~/data/countries";
+import { stateApi, projectApi } from "~/lib/api";
 import { cn } from "~/lib/utils";
 import { fileToBase64 } from "~/utils/base64";
 
@@ -95,7 +96,6 @@ type CompanyFormValues = z.infer<typeof companyFormSchema>;
 
 export default function CreateCompany() {
   const router = useRouter();
-  const [countries, setCountries] = useState<Country[]>([]);
   const [states, setStates] = useState<string[]>([]);
   const [isLoadingStates, setIsLoadingStates] = useState(false);
   const form = useForm<CompanyFormValues>({
@@ -167,20 +167,19 @@ export default function CreateCompany() {
     },
   });
 
-  useQuery({
-    queryKey: ["countries"],
-    queryFn: async () => {
-      const response = await countryAndStateApi.getCountryList();
-      setCountries(response);
-    },
-  });
-
-  const fetchStates = async (countryId: string) => {
+  const fetchStates = async (countryName: string) => {
     try {
       setIsLoadingStates(true);
-      const response = await countryAndStateApi.getStateList(
-        parseInt(countryId),
+
+      const country = countries.find(
+        (country) => country.name === countryName,
       );
+
+      if (!country) {
+        throw new Error("Country not found");
+      }
+
+      const response = await stateApi.getStateList(country.id);
       setStates(response);
     } catch (error) {
       console.error(
@@ -449,7 +448,7 @@ export default function CreateCompany() {
                             {countries.map((country) => (
                               <SelectItem
                                 key={country.id}
-                                value={country.id.toString()}
+                                value={country.name}
                               >
                                 {country.name}
                               </SelectItem>

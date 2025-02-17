@@ -26,13 +26,7 @@ api.interceptors.response.use(
   async (error: AxiosError) => {
     const originalRequest = error.config;
 
-    if (
-      error.response?.status === 401 &&
-      originalRequest
-      //   !(originalRequest as any)._retry
-    ) {
-      //   originalRequest._retry = true;
-
+    if (error.response?.status === 401 && originalRequest) {
       try {
         const refreshToken = sessionStorage.getItem("refreshToken");
         const response = await axios.get<RefreshResponse>(
@@ -123,12 +117,16 @@ export interface RegisterInvestorRequest {
   referralToken?: string;
 }
 
-interface EntrepreneurProfile {
+export interface EntrepreneurProfile {
   avatar: string | null;
-  name: string | null;
+  banner: string | null;
+  firstName: string;
+  lastName: string;
   about: string | null;
   city: string | null;
   country: string | null;
+  fiscalCode: string | null;
+  mobileFone: string | null;
   companyRole: string | null;
   companyName: string | null;
   memberSince: string;
@@ -137,10 +135,14 @@ interface EntrepreneurProfile {
   totalInvestors: number;
 }
 
-interface InvestorProfile {
+export interface InvestorProfile {
   reputation: string | null;
-  name: string | null;
+  banner: string | null;
+  firstName: string | null;
+  lastName: string | null;
   about: string | null;
+  mobileFone: string | null;
+  fiscalCode: string | null;
   city: string | null;
   country: string | null;
   companyRole: string | null;
@@ -150,6 +152,44 @@ interface InvestorProfile {
   investmentObjective: string | null;
   avatar: string | null;
   areas: number[];
+}
+
+interface PhotoUpload {
+  name: string;
+  type: string;
+  size: string;
+  base64: string;
+}
+
+interface UpdateEntrepreneurProfileRequest {
+  firstName: string;
+  lastName: string;
+  country: string;
+  city: string;
+  companyRole: string;
+  companyName: string;
+  fiscalCode: string;
+  mobileFone: string;
+  about?: string;
+  photo?: PhotoUpload;
+}
+
+interface UpdateInvestorProfileRequest {
+  firstName: string;
+  lastName: string;
+  mobileFone: string;
+  fiscalCode: string;
+  country: string;
+  city: string;
+  about?: string;
+  photo?: PhotoUpload;
+}
+
+interface UploadBannerRequest {
+  name: string;
+  type: string;
+  size: string;
+  base64: string;
 }
 
 export const authApi = {
@@ -225,14 +265,14 @@ export interface ProjectResponse {
   investorSlots: number;
   annualRevenue: string;
   investmentGoal: string;
-  equity: string | undefined
+  equity: string | undefined;
   companyFaq: {
     question: string;
     answer: string;
-  }[]
+  }[];
 }
 
-type ProjectRequest = Omit<ProjectResponse, 'id'>
+type ProjectRequest = Omit<ProjectResponse, "id">;
 
 interface UploadFileRequest {
   idProject: number;
@@ -242,17 +282,7 @@ interface UploadFileRequest {
   base64: string;
 }
 
-export interface Country {
-  id: number;
-  name: string;
-  iso: string;
-}
-
-export const countryAndStateApi = {
-  getCountryList: async () => {
-    const response = await api.get<Country[]>("/country");
-    return response.data;
-  },
+export const stateApi = {
   getStateList: async (countryId: number) => {
     const response = await api.get<string[]>(`/country/${countryId}`);
     return response.data;
@@ -272,4 +302,27 @@ export const projectApi = {
     const response = await api.get<ProjectResponse[]>("/project");
     return response.data;
   },
+};
+
+export const profileApi = {
+  getEntrepreneurProfile: async () => {
+    const response = await api.get<EntrepreneurProfile>("/entrepreneur");
+    return response.data;
+  },
+  getInvestorProfile: async () => {
+    const response = await api.get<InvestorProfile>("/investor");
+    return response.data;
+  },
+  updateEntrepreneurProfile: async (data: UpdateEntrepreneurProfileRequest) => {
+    const response = await api.patch<void>("/entrepreneur", data);
+    return response.data;
+  },
+  updateInvestorProfile: async (data: UpdateInvestorProfileRequest) => {
+    const response = await api.patch<void>("/investor", data);
+    return response.data;
+  },
+  uploadBanner: async (data: UploadBannerRequest) => {
+    const response = await api.post<void>("/api/upload-banner", data);
+    return response.data;
+  }
 };

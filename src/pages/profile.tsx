@@ -1,6 +1,13 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { ArrowRight, ImageIcon, MapPin, Pencil, Plus } from "lucide-react";
+import {
+  ArrowRight,
+  ImageIcon,
+  MapPin,
+  Pencil,
+  Plus,
+  User,
+} from "lucide-react";
 import Image from "next/image";
 import { useRouter } from "next/router";
 import { type ChangeEvent, useEffect, useState } from "react";
@@ -27,44 +34,14 @@ import {
   SelectValue,
 } from "~/components/ui/select";
 import { Textarea } from "~/components/ui/textarea";
-import { api, type Country, countryAndStateApi } from "~/lib/api";
-
-interface EntrepreneurProfile {
-  avatar: string | null;
-  banner: string | null;
-  firstName: string;
-  lastName: string;
-  about: string | null;
-  city: string | null;
-  country: string | null;
-  fiscalCode: string | null;
-  mobileFone: string | null;
-  companyRole: string | null;
-  companyName: string | null;
-  memberSince: string;
-  focusSector: string;
-  skills: string[];
-  totalInvestors: number;
-}
-
-interface InvestorProfile {
-  reputation: string | null;
-  banner: string | null;
-  firstName: string | null;
-  lastName: string | null;
-  about: string | null;
-  mobileFone: string | null;
-  fiscalCode: string | null;
-  city: string | null;
-  country: string | null;
-  companyRole: string | null;
-  companyName: string | null;
-  memberSince: string;
-  netWorth: string;
-  investmentObjective: string | null;
-  avatar: string | null;
-  areas: number[];
-}
+import { countries } from "~/data/countries";
+import {
+  type EntrepreneurProfile,
+  type InvestorProfile,
+  profileApi,
+  stateApi,
+} from "~/lib/api";
+import { fileToBase64 } from "~/utils/base64";
 
 const entrepreneurFormSchema = z.object({
   firstName: z.string().min(2, "First name must be at least 2 characters"),
@@ -76,6 +53,14 @@ const entrepreneurFormSchema = z.object({
   fiscalCode: z.string().min(1, "Fiscal code is required"),
   mobileFone: z.string().min(1, "Mobile phone is required"),
   about: z.string().optional(),
+  photo: z
+    .object({
+      name: z.string(),
+      type: z.string(),
+      size: z.string(),
+      base64: z.string(),
+    })
+    .optional(),
 });
 
 const investorFormSchema = z.object({
@@ -86,15 +71,23 @@ const investorFormSchema = z.object({
   country: z.string().min(1, "Country is required"),
   city: z.string().min(1, "City is required"),
   about: z.string().optional(),
+  photo: z
+    .object({
+      name: z.string(),
+      type: z.string(),
+      size: z.string(),
+      base64: z.string(),
+    })
+    .optional(),
 });
 
 export default function Profile() {
   const router = useRouter();
-  const [countries, setCountries] = useState<Country[]>([]);
   const [states, setStates] = useState<string[]>([]);
   const [isEditing, setIsEditing] = useState(false);
   const [isUploadingBanner, setIsUploadingBanner] = useState(false);
   const [isLoadingStates, setIsLoadingStates] = useState(false);
+  const [isUploadingPhoto, setIsUploadingPhoto] = useState(false);
   const userType =
     typeof window !== "undefined" ? sessionStorage.getItem("type") : null;
 
@@ -111,24 +104,12 @@ export default function Profile() {
     data: profileData,
     isLoading,
     refetch,
-  } = useQuery<EntrepreneurProfile | InvestorProfile>({
+  } = useQuery({
     queryKey: ["profile"],
     queryFn: async () => {
-      const endpoint =
-        userType === "ENTREPRENEUR" ? "/entrepreneur" : "/investor";
-      const response = await api.get<EntrepreneurProfile | InvestorProfile>(
-        endpoint,
-      );
-      return response.data;
-    },
-    enabled: !!userType,
-  });
-
-  useQuery({
-    queryKey: ["countries"],
-    queryFn: async () => {
-      const response = await countryAndStateApi.getCountryList();
-      setCountries(response);
+      return userType === "ENTREPRENEUR"
+        ? profileApi.getEntrepreneurProfile()
+        : profileApi.getInvestorProfile();
     },
     enabled: !!userType,
   });
@@ -136,35 +117,64 @@ export default function Profile() {
   const entrepreneurForm = useForm<z.infer<typeof entrepreneurFormSchema>>({
     resolver: zodResolver(entrepreneurFormSchema),
     defaultValues: {
-      firstName: profileData?.firstName ?? "",
-      lastName: profileData?.lastName ?? "",
-      country: profileData?.country ?? "",
-      city: profileData?.city ?? "",
-      fiscalCode: profileData?.fiscalCode ?? "",
-      mobileFone: profileData?.mobileFone ?? "",
-      companyRole: profileData?.companyRole ?? "",
-      companyName: profileData?.companyName ?? "",
-      about: profileData?.about ?? "",
+      firstName: "",
+      lastName: "",
+      country: "",
+      city: "",
+      fiscalCode: "",
+      mobileFone: "",
+      companyRole: "",
+      companyName: "",
+      about: "",
     },
   });
 
   const investorForm = useForm<z.infer<typeof investorFormSchema>>({
     resolver: zodResolver(investorFormSchema),
     defaultValues: {
-      firstName: profileData?.firstName ?? "",
-      lastName: profileData?.lastName ?? "",
-      fiscalCode: profileData?.fiscalCode ?? "",
-      mobileFone: profileData?.mobileFone ?? "",
-      country: profileData?.country ?? "",
-      city: profileData?.city ?? "",
-      about: profileData?.about ?? "",
+      firstName: "",
+      lastName: "",
+      fiscalCode: "",
+      mobileFone: "",
+      country: "",
+      city: "",
+      about: "",
     },
   });
+
+  // Update form values when profile data is loaded
+  useEffect(() => {
+    if (profileData && userType === "ENTREPRENEUR") {
+      const data = profileData as EntrepreneurProfile;
+      entrepreneurForm.reset({
+        firstName: data.firstName ?? "",
+        lastName: data.lastName ?? "",
+        country: "",
+        city: "",
+        fiscalCode: data.fiscalCode ?? "",
+        mobileFone: data.mobileFone ?? "",
+        companyRole: data.companyRole ?? "",
+        companyName: data.companyName ?? "",
+        about: data.about ?? "",
+      });
+    } else if (profileData && userType === "INVESTOR") {
+      const data = profileData as InvestorProfile;
+      investorForm.reset({
+        firstName: data.firstName ?? "",
+        lastName: data.lastName ?? "",
+        fiscalCode: data.fiscalCode ?? "",
+        mobileFone: data.mobileFone ?? "",
+        country: "",
+        city: "",
+        about: data.about ?? "",
+      });
+    }
+  }, [entrepreneurForm, investorForm, profileData, userType]);
 
   const { mutate: updateEntrepreneur, isPending: isUpdatingEntrepreneur } =
     useMutation({
       mutationFn: (data: z.infer<typeof entrepreneurFormSchema>) =>
-        api.patch("/entrepreneur", data),
+        profileApi.updateEntrepreneurProfile(data),
       onSuccess: () => {
         toast.success("Profile updated successfully!");
         setIsEditing(false);
@@ -178,7 +188,7 @@ export default function Profile() {
   const { mutate: updateInvestor, isPending: isUpdatingInvestor } = useMutation(
     {
       mutationFn: (data: z.infer<typeof investorFormSchema>) =>
-        api.patch("/investor", data),
+        profileApi.updateInvestorProfile(data),
       onSuccess: () => {
         toast.success("Profile updated successfully!");
         setIsEditing(false);
@@ -190,12 +200,17 @@ export default function Profile() {
     },
   );
 
-  const fetchStates = async (countryId: string) => {
+  const fetchStates = async (countryName: string) => {
     try {
       setIsLoadingStates(true);
-      const response = await countryAndStateApi.getStateList(
-        parseInt(countryId),
-      );
+
+      const country = countries.find((country) => country.name === countryName);
+
+      if (!country) {
+        throw new Error("Country not found");
+      }
+
+      const response = await stateApi.getStateList(country.id);
       setStates(response);
     } catch (error) {
       console.error("Error fetching states:", error);
@@ -236,9 +251,8 @@ export default function Profile() {
           base64: base64,
         };
 
-        await api.post("/api/upload-banner", payload);
+        await profileApi.uploadBanner(payload);
         toast.success("Banner uploaded successfully!");
-        // Refetch profile data to get new banner URL
         void refetch();
       };
     } catch (error) {
@@ -247,6 +261,34 @@ export default function Profile() {
     } finally {
       setIsUploadingBanner(false);
     }
+  };
+
+  const handlePhotoUpload = async (e: ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setIsUploadingPhoto(true);
+
+    const base64 = await fileToBase64(file);
+
+    const photoData = {
+      name: file.name,
+      type: file.type,
+      size: file.size.toString(),
+      base64: base64 as string,
+    };
+
+    // Store the photo in the appropriate form state
+    if (userType === "ENTREPRENEUR") {
+      entrepreneurForm.setValue("photo", photoData);
+    } else {
+      investorForm.setValue("photo", photoData);
+    }
+
+    console.log(photoData);
+
+    toast.success("Photo ready to be saved");
+    setIsUploadingPhoto(false);
   };
 
   if (isLoading) {
@@ -289,7 +331,50 @@ export default function Profile() {
     </div>
   );
 
-  const renderEntrepreneurProfile = (data: EntrepreneurProfile) => (
+  const renderPhotoUpload = (currentPhoto: string | null) => {
+    const formPhoto =
+      userType === "ENTREPRENEUR"
+        ? entrepreneurForm.getValues("photo")?.base64
+        : investorForm.getValues("photo")?.base64;
+
+    console.log(userType);
+    console.log(formPhoto);
+
+    const photoToShow = formPhoto
+      ? `data:image/*;base64,${formPhoto}`
+      : currentPhoto;
+
+    return (
+      <div className="relative">
+        <label htmlFor="photo-upload">
+          <div className="flex h-24 w-24 items-center justify-center rounded-full bg-[#D1D5DB] hover:cursor-pointer hover:opacity-75">
+            {photoToShow ? (
+              <Image
+                src={photoToShow}
+                alt="Profile"
+                width={96}
+                height={96}
+                className="h-24 w-24 rounded-full object-cover"
+              />
+            ) : (
+              <Plus className="h-8 w-8 text-black" />
+            )}
+          </div>
+
+          <input
+            id="photo-upload"
+            type="file"
+            accept="image/*"
+            className="hidden"
+            onChange={handlePhotoUpload}
+            disabled={isUploadingPhoto}
+          />
+        </label>
+      </div>
+    );
+  };
+
+  const renderEntrepreneurProfile = (profileData: EntrepreneurProfile) => (
     <div className="space-y-6">
       {isEditing ? (
         <Form {...entrepreneurForm}>
@@ -299,12 +384,10 @@ export default function Profile() {
             )}
             className="space-y-4 rounded-lg border-2 border-white/10 bg-[#242630]"
           >
-            {renderBannerUpload(data.banner)}
+            {renderBannerUpload(profileData.banner)}
 
             <div className="flex items-center justify-center">
-              <div className="flex h-24 w-24 items-center justify-center rounded-full bg-[#D1D5DB] hover:opacity-75">
-                <Plus className="h-8 w-8 text-black" />
-              </div>
+              {renderPhotoUpload(profileData.avatar)}
             </div>
 
             <div className="mx-6 grid grid-cols-1 gap-4 pt-2 md:grid-cols-2">
@@ -416,7 +499,7 @@ export default function Profile() {
                           {countries.map((country) => (
                             <SelectItem
                               key={country.id}
-                              value={country.id.toString()}
+                              value={country.name.toString()}
                             >
                               {country.name}
                             </SelectItem>
@@ -547,21 +630,23 @@ export default function Profile() {
         <>
           <div className="rounded-lg border border-white/10 px-12 pb-20 pt-6">
             <div className="flex items-center space-x-4">
-              {data.avatar ? (
-                <Image
-                  src={data.avatar}
-                  alt="Profile"
-                  width={100}
-                  height={100}
-                  className="rounded-full"
-                />
-              ) : (
-                <div className="h-24 w-24 rounded-full bg-[#282B37]" />
-              )}
+              <div className="flex h-24 w-24 items-center justify-center rounded-full bg-[#D1D5DB]">
+                {profileData.avatar ? (
+                  <Image
+                    src={profileData.avatar}
+                    alt="Profile"
+                    width={96}
+                    height={96}
+                    className="h-24 w-24 rounded-full object-cover"
+                  />
+                ) : (
+                  <User className="h-8 w-8 text-black" />
+                )}
+              </div>
             </div>
             <div className="mt-4 flex items-center justify-between">
               <h2 className="text-3xl font-semibold">
-                {data.firstName + " " + data.lastName}
+                {profileData.firstName + " " + profileData.lastName}
               </h2>
               <Button
                 variant="outline"
@@ -573,17 +658,17 @@ export default function Profile() {
               </Button>
             </div>
             <p className="mt-3 text-lg text-gray-400">
-              {data.companyRole ?? "Entrepreneur"}
+              {profileData.companyRole ?? "Entrepreneur"}
             </p>
             <p className="mt-1 flex items-center gap-1 text-gray-400">
               <MapPin className="mr-0.5 h-4 w-4" />
-              {data.city && data.country
-                ? `${data.city}, ${data.country}`
+              {profileData.city && profileData.country
+                ? `${profileData.city}, ${profileData.country}`
                 : "Not specified"}
             </p>
             <h3 className="mt-12 font-semibold">About me</h3>
             <p className="mt-3 text-gray-400">
-              {data.about ?? "No description"}
+              {profileData.about ?? "No description"}
             </p>
             <h3 className="mt-12 font-semibold">Company</h3>
             <Button
@@ -599,7 +684,7 @@ export default function Profile() {
     </div>
   );
 
-  const renderInvestorProfile = (data: InvestorProfile) => (
+  const renderInvestorProfile = (profileData: InvestorProfile) => (
     <div className="space-y-6">
       {isEditing ? (
         <Form {...investorForm}>
@@ -607,11 +692,9 @@ export default function Profile() {
             onSubmit={investorForm.handleSubmit((data) => updateInvestor(data))}
             className="space-y-4 rounded-lg border-2 border-white/10 bg-[#242630]"
           >
-            {renderBannerUpload(data.banner)}
+            {renderBannerUpload(profileData.banner)}
             <div className="flex items-center justify-center">
-              <div className="flex h-24 w-24 items-center justify-center rounded-full bg-[#D1D5DB] hover:opacity-75">
-                <Plus className="h-8 w-8 text-black" />
-              </div>
+              {renderPhotoUpload(profileData.avatar)}
             </div>
 
             <div className="mx-6 grid grid-cols-1 gap-4 pt-8 md:grid-cols-2">
@@ -723,7 +806,7 @@ export default function Profile() {
                           {countries.map((country) => (
                             <SelectItem
                               key={country.id}
-                              value={country.id.toString()}
+                              value={country.name.toString()}
                             >
                               {country.name}
                             </SelectItem>
@@ -811,21 +894,23 @@ export default function Profile() {
       ) : (
         <div className="rounded-lg border border-white/10 px-12 pb-20 pt-6">
           <div className="flex items-center space-x-4">
-            {data.avatar ? (
-              <Image
-                src={data.avatar}
-                alt="Profile"
-                width={100}
-                height={100}
-                className="rounded-full"
-              />
-            ) : (
-              <div className="h-24 w-24 rounded-full bg-[#282B37]" />
-            )}
+            <div className="flex h-24 w-24 items-center justify-center rounded-full bg-[#D1D5DB]">
+              {profileData.avatar ? (
+                <Image
+                  src={profileData.avatar}
+                  alt="Profile"
+                  width={96}
+                  height={96}
+                  className="h-24 w-24 rounded-full object-cover"
+                />
+              ) : (
+                <User className="h-8 w-8 text-black" />
+              )}
+            </div>
           </div>
           <div className="mt-4 flex items-center justify-between">
             <h2 className="text-3xl font-semibold">
-              {data.firstName + " " + data.lastName}
+              {profileData.firstName + " " + profileData.lastName}
             </h2>
             <Button
               variant="outline"
@@ -838,12 +923,14 @@ export default function Profile() {
           </div>
           <p className="mt-1 flex items-center gap-1 text-gray-400">
             <MapPin className="mr-0.5 h-4 w-4" />
-            {data.city && data.country
-              ? `${data.city}, ${data.country}`
+            {profileData.city && profileData.country
+              ? `${profileData.city}, ${profileData.country}`
               : "Not specified"}
           </p>
           <h3 className="mt-12 font-semibold">About me</h3>
-          <p className="mt-3 text-gray-400">{data.about ?? "No description"}</p>
+          <p className="mt-3 text-gray-400">
+            {profileData.about ?? "No description"}
+          </p>
           <h3 className="mt-12 font-semibold">Portfolio</h3>
           <p>TODO</p>
         </div>
