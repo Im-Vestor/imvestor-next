@@ -18,6 +18,14 @@ const config = {
     defaultLocale: "en",
   },
   transpilePackages: ["geist"],
+  images: {
+    remotePatterns: [
+      {
+        hostname: "*",
+        protocol: "https",
+      },
+    ],
+  },
 };
 
 export default config;

@@ -91,14 +91,7 @@ export default function Profile() {
   const userType =
     typeof window !== "undefined" ? sessionStorage.getItem("type") : null;
 
-  useEffect(() => {
-    const checkAuth = async () => {
-      if (!sessionStorage.getItem("accessToken")) {
-        await router.push("/login");
-      }
-    };
-    void checkAuth();
-  }, [router]);
+
 
   const {
     data: profileData,

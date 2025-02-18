@@ -1,4 +1,4 @@
-import { LogOut, User } from "lucide-react";
+import { LogOut, Mail, User } from "lucide-react";
 import Image from "next/image";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
@@ -35,8 +35,6 @@ export const Header = () => {
             ? await profileApi.getEntrepreneurProfile()
             : await profileApi.getInvestorProfile();
 
-          console.log(profile);
-
           setUserProfile(profile);
         } catch (error) {
           console.error("Error fetching user profile:", error);
@@ -48,6 +46,15 @@ export const Header = () => {
       void fetchUserProfile();
     }
   }, []);
+
+  useEffect(() => {
+    const checkAuth = async () => {
+      if (!sessionStorage.getItem("accessToken")) {
+        await router.push("/login");
+      }
+    };
+    void checkAuth();
+  }, [router]);
 
   const handleSignOut = async () => {
     sessionStorage.clear();
@@ -143,6 +150,10 @@ export const Header = () => {
               <DropdownMenuItem onClick={() => router.push("/profile")}>
                 <User className="h-4 w-4" />
                 Profile
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => router.push("/referral")}>
+                <Mail className="h-4 w-4" />
+                Referrals
               </DropdownMenuItem>
               <DropdownMenuItem onClick={handleSignOut}>
                 <LogOut className="h-4 w-4" />

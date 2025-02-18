@@ -8,7 +8,7 @@ import { Toaster } from "~/components/ui/sonner";
 
 const roboto = Roboto({
   subsets: ["latin"],
-  weight: ["400", "500", "700"],
+  weight: ["300", "400", "500", "700"],
   display: "swap",
   variable: "--font-sans",
 });

@@ -30,9 +30,7 @@ export default function Referral() {
 
   useEffect(() => {
     if (profile) {
-      console.log(profile);
-
-      setName(profile.name ?? "");
+      setName(profile.firstName + " " + profile.lastName);
       setEmail(sessionStorage.getItem("email") ?? "");
     }
   }, [profile]);
