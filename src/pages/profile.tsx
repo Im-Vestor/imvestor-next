@@ -126,6 +126,12 @@ export default function Profile() {
       companyRole: "",
       companyName: "",
       about: "",
+      photo: {
+        name: "",
+        type: "",
+        size: "",
+        base64: "",
+      },
     },
   });
 
@@ -139,6 +145,12 @@ export default function Profile() {
       country: "",
       city: "",
       about: "",
+      photo: {
+        name: "",
+        type: "",
+        size: "",
+        base64: "",
+      },
     },
   });
 
@@ -156,6 +168,12 @@ export default function Profile() {
         companyRole: data.companyRole ?? "",
         companyName: data.companyName ?? "",
         about: data.about ?? "",
+        photo: {
+          name: data.avatar ?? "",
+          type: "",
+          size: "",
+          base64: "",
+        },
       });
     } else if (profileData && userType === "INVESTOR") {
       const data = profileData as InvestorProfile;
@@ -167,6 +185,12 @@ export default function Profile() {
         country: "",
         city: "",
         about: data.about ?? "",
+        photo: {
+          name: data.avatar ?? "",
+          type: "",
+          size: "",
+          base64: "",
+        },
       });
     }
   }, [entrepreneurForm, investorForm, profileData, userType]);
@@ -177,6 +201,7 @@ export default function Profile() {
         profileApi.updateEntrepreneurProfile(data),
       onSuccess: () => {
         toast.success("Profile updated successfully!");
+        void refetch();
         setIsEditing(false);
       },
       onError: (error) => {
@@ -191,6 +216,7 @@ export default function Profile() {
         profileApi.updateInvestorProfile(data),
       onSuccess: () => {
         toast.success("Profile updated successfully!");
+        void refetch();
         setIsEditing(false);
       },
       onError: (error) => {
@@ -336,9 +362,6 @@ export default function Profile() {
       userType === "ENTREPRENEUR"
         ? entrepreneurForm.getValues("photo")?.base64
         : investorForm.getValues("photo")?.base64;
-
-    console.log(userType);
-    console.log(formPhoto);
 
     const photoToShow = formPhoto
       ? `data:image/*;base64,${formPhoto}`

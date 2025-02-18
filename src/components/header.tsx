@@ -1,24 +1,58 @@
-import { LogOut } from "lucide-react";
+import { LogOut, User } from "lucide-react";
 import Image from "next/image";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { Button } from "./ui/button";
 import { usePathname } from "next/navigation";
+import { type EntrepreneurProfile, type InvestorProfile, profileApi } from "../lib/api";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "./ui/dropdown-menu";
+
+type Profile = EntrepreneurProfile | InvestorProfile;
 
 export const Header = () => {
   const router = useRouter();
-
   const path = usePathname();
 
   const [accessToken, setAccessToken] = useState("");
   const [userType, setUserType] = useState("");
+  const [userProfile, setUserProfile] = useState<Profile | null>(null);
 
   useEffect(() => {
     const token = sessionStorage.getItem("accessToken");
-    const userType = sessionStorage.getItem("type");
+    const type = sessionStorage.getItem("type");
     setAccessToken(token ?? "");
-    setUserType(userType ?? "");
+    setUserType(type ?? "");
+
+    const fetchUserProfile = async () => {
+      if (type === "ENTREPRENEUR" || type === "INVESTOR") {
+        try {
+          const profile = type === "ENTREPRENEUR" 
+            ? await profileApi.getEntrepreneurProfile()
+            : await profileApi.getInvestorProfile();
+
+          console.log(profile);
+
+          setUserProfile(profile);
+        } catch (error) {
+          console.error("Error fetching user profile:", error);
+        }
+      }
+    };
+
+    if (token && type) {
+      void fetchUserProfile();
+    }
   }, []);
+
+  const handleSignOut = async () => {
+    sessionStorage.clear();
+    await router.push("/login");
+  };
 
   return (
     <div
@@ -86,20 +120,37 @@ export const Header = () => {
         </div>
       )}
 
-      {accessToken && (
-        <div className="flex w-1/3 justify-end gap-3">
-          <Button
-            onClick={async () => {
-              sessionStorage.clear();
-              await router.push("/login");
-            }}
-            variant="ghost"
-            size="icon"
-          >
-            <LogOut className="h-6 w-6" />
-          </Button>
+      
+        <div className="flex w-1/3 items-center justify-end gap-3">
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" className="flex items-center gap-2">
+                {userProfile?.avatar ? (
+                  <Image
+                    src={userProfile?.avatar ?? ""}
+                    alt="Profile"
+                    width={32}
+                    height={32}
+                    className="rounded-full"
+                  />
+                ) : (
+                  <User className="h-8 w-8" />
+                )}
+                <span>{userProfile?.firstName}</span>
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuItem onClick={() => router.push("/profile")}>
+                <User className="h-4 w-4" />
+                Profile
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={handleSignOut}>
+                <LogOut className="h-4 w-4" />
+                Sign out
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
-      )}
     </div>
   );
 };

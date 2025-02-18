@@ -1,5 +1,5 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { format } from "date-fns";
 import {
   ArrowLeft,
@@ -40,7 +40,7 @@ import {
 } from "~/components/ui/select";
 import { Textarea } from "~/components/ui/textarea";
 import { countries } from "~/data/countries";
-import { stateApi, projectApi } from "~/lib/api";
+import { stateApi, projectApi, areasApi } from "~/lib/api";
 import { cn } from "~/lib/utils";
 import { fileToBase64 } from "~/utils/base64";
 
@@ -97,6 +97,12 @@ type CompanyFormValues = z.infer<typeof companyFormSchema>;
 export default function CreateCompany() {
   const router = useRouter();
   const [states, setStates] = useState<string[]>([]);
+
+  const { data: areas } = useQuery({
+    queryKey: ["areas"],
+    queryFn: areasApi.getAreasList,
+  });
+
   const [isLoadingStates, setIsLoadingStates] = useState(false);
   const form = useForm<CompanyFormValues>({
     resolver: zodResolver(companyFormSchema),
@@ -384,7 +390,23 @@ export default function CreateCompany() {
                         Company Sector*
                       </Label>
                       <FormControl>
-                        <Input placeholder="e.g. Technology" {...field} />
+                        <Select
+                          value={field.value}
+                          onValueChange={(value: string) => {
+                            field.onChange(value);
+                          }}
+                        >
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select sector" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {areas?.map((area) => (
+                              <SelectItem key={area.id} value={area.name}>
+                                {area.name}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
                       </FormControl>
                       <FormMessage />
                     </FormItem>
