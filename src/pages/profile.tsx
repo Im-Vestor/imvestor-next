@@ -1,5 +1,5 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   ArrowRight,
   ImageIcon,
@@ -39,6 +39,8 @@ import {
   type EntrepreneurProfile,
   type InvestorProfile,
   profileApi,
+  projectApi,
+  type ProjectResponse,
   stateApi,
 } from "~/lib/api";
 import { fileToBase64 } from "~/utils/base64";
@@ -83,6 +85,7 @@ const investorFormSchema = z.object({
 
 export default function Profile() {
   const router = useRouter();
+  const queryClient = useQueryClient();
   const [states, setStates] = useState<string[]>([]);
   const [isEditing, setIsEditing] = useState(false);
   const [isUploadingBanner, setIsUploadingBanner] = useState(false);
@@ -91,7 +94,13 @@ export default function Profile() {
   const userType =
     typeof window !== "undefined" ? sessionStorage.getItem("type") : null;
 
+  const { data: projects } = useQuery({
+    queryKey: ["projects"],
+    queryFn: () => projectApi.getEntrepreneurProjects(),
+    enabled: userType === "ENTREPRENEUR",
+  });
 
+  console.log(projects);
 
   const {
     data: profileData,
@@ -194,7 +203,8 @@ export default function Profile() {
         profileApi.updateEntrepreneurProfile(data),
       onSuccess: () => {
         toast.success("Profile updated successfully!");
-        void refetch();
+        // refetch queries with key "profile"
+        void queryClient.invalidateQueries({ queryKey: ["profile"] });
         setIsEditing(false);
       },
       onError: (error) => {
@@ -209,7 +219,7 @@ export default function Profile() {
         profileApi.updateInvestorProfile(data),
       onSuccess: () => {
         toast.success("Profile updated successfully!");
-        void refetch();
+        void queryClient.invalidateQueries({ queryKey: ["profile"] });
         setIsEditing(false);
       },
       onError: (error) => {
@@ -687,9 +697,16 @@ export default function Profile() {
               {profileData.about ?? "No description"}
             </p>
             <h3 className="mt-12 font-semibold">Company</h3>
+            {projects && projects.length > 0 && (
+              <div className="mt-4">
+                {projects.map((project) => (
+                  <CompanyCard key={project.companyName} company={project} />
+                ))}
+              </div>
+            )}
             <Button
               className="mt-4 md:w-1/3"
-              onClick={() => router.push("/create-company")}
+                onClick={() => router.push("/create-company")}
             >
               Add your Company
               <ArrowRight className="ml-2" />
@@ -964,5 +981,23 @@ export default function Profile() {
             : renderInvestorProfile(profileData as InvestorProfile))}
       </div>
     </main>
+  );
+}
+
+function CompanyCard({ company }: { company: ProjectResponse }) {
+  return (
+    <div className="rounded-lg border border-white/10 px-12 pb-20 pt-6">
+      <div className="flex items-center space-x-4">
+        <div className="flex h-24 w-24 items-center justify-center rounded-full bg-[#D1D5DB]">
+          <Image
+            src={company.banner}
+            alt="Company Banner"
+            width={96}
+            height={96}
+            className="h-24 w-24 rounded-full object-cover"
+          />
+        </div>
+      </div>
+    </div>
   );
 }

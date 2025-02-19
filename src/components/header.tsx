@@ -4,13 +4,18 @@ import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { Button } from "./ui/button";
 import { usePathname } from "next/navigation";
-import { type EntrepreneurProfile, type InvestorProfile, profileApi } from "../lib/api";
+import {
+  type EntrepreneurProfile,
+  type InvestorProfile,
+  profileApi,
+} from "../lib/api";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "./ui/dropdown-menu";
+import { useQuery } from "@tanstack/react-query";
 
 type Profile = EntrepreneurProfile | InvestorProfile;
 
@@ -22,30 +27,30 @@ export const Header = () => {
   const [userType, setUserType] = useState("");
   const [userProfile, setUserProfile] = useState<Profile | null>(null);
 
+  const {
+    data: profileData,
+  } = useQuery({
+    queryKey: ["profile"],
+    queryFn: async () => {
+      return userType === "ENTREPRENEUR"
+        ? profileApi.getEntrepreneurProfile()
+        : profileApi.getInvestorProfile();
+    },
+    enabled: !!userType && !!accessToken,
+  });
+
   useEffect(() => {
     const token = sessionStorage.getItem("accessToken");
     const type = sessionStorage.getItem("type");
     setAccessToken(token ?? "");
     setUserType(type ?? "");
-
-    const fetchUserProfile = async () => {
-      if (type === "ENTREPRENEUR" || type === "INVESTOR") {
-        try {
-          const profile = type === "ENTREPRENEUR" 
-            ? await profileApi.getEntrepreneurProfile()
-            : await profileApi.getInvestorProfile();
-
-          setUserProfile(profile);
-        } catch (error) {
-          console.error("Error fetching user profile:", error);
-        }
-      }
-    };
-
-    if (token && type) {
-      void fetchUserProfile();
-    }
   }, []);
+
+  useEffect(() => {
+    if (profileData) {
+      setUserProfile(profileData);
+    }
+  }, [profileData]);
 
   useEffect(() => {
     const checkAuth = async () => {
@@ -74,10 +79,10 @@ export const Header = () => {
           <Button
             variant="ghost"
             size="sm"
-            className={`${path === "/dashboard" ? "text-[#EFD687]" : ""}`}
-            onClick={() => router.push("/dashboard")}
+            className={`${path === "/companies" ? "text-[#EFD687]" : ""}`}
+            onClick={() => router.push("/companies")}
           >
-            Dashboard
+            Companies
           </Button>
           <Button
             variant="ghost"
@@ -103,10 +108,10 @@ export const Header = () => {
           <Button
             variant="ghost"
             size="sm"
-            className={`${path === "/companies" ? "text-[#EFD687]" : ""}`}
-            onClick={() => router.push("/companies")}
+            className={`${path === "/dashboard" ? "text-[#EFD687]" : ""}`}
+            onClick={() => router.push("/dashboard")}
           >
-            Companies
+            Dashboard
           </Button>
           <Button
             variant="ghost"
@@ -127,41 +132,40 @@ export const Header = () => {
         </div>
       )}
 
-      
-        <div className="flex w-1/3 items-center justify-end gap-3">
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="ghost" className="flex items-center gap-2">
-                {userProfile?.avatar ? (
-                  <Image
-                    src={userProfile?.avatar ?? ""}
-                    alt="Profile"
-                    width={32}
-                    height={32}
-                    className="rounded-full"
-                  />
-                ) : (
-                  <User className="h-8 w-8" />
-                )}
-                <span>{userProfile?.firstName}</span>
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              <DropdownMenuItem onClick={() => router.push("/profile")}>
-                <User className="h-4 w-4" />
-                Profile
-              </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => router.push("/referral")}>
-                <Mail className="h-4 w-4" />
-                Referrals
-              </DropdownMenuItem>
-              <DropdownMenuItem onClick={handleSignOut}>
-                <LogOut className="h-4 w-4" />
-                Sign out
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
-        </div>
+      <div className="flex w-1/3 items-center justify-end gap-3">
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="ghost" className="flex items-center gap-4">
+              <span>{userProfile?.firstName}</span>
+              {userProfile?.avatar ? (
+                <Image
+                  src={userProfile?.avatar ?? ""}
+                  alt="Profile"
+                  width={24}
+                  height={24}
+                  className="rounded-full"
+                />
+              ) : (
+                <User className="h-8 w-8" />
+              )}
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end">
+            <DropdownMenuItem onClick={() => router.push("/profile")}>
+              <User className="h-4 w-4" />
+              Profile
+            </DropdownMenuItem>
+            <DropdownMenuItem onClick={() => router.push("/referral")}>
+              <Mail className="h-4 w-4" />
+              Referrals
+            </DropdownMenuItem>
+            <DropdownMenuItem onClick={handleSignOut}>
+              <LogOut className="h-4 w-4" />
+              Sign out
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      </div>
     </div>
   );
 };

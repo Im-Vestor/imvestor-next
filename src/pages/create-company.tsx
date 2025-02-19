@@ -69,7 +69,7 @@ const companyFormSchema = z.object({
     .min(10, "Quick solution must be at least 10 characters"),
   webSite: z.string().optional(),
   foundationDate: z.date(),
-  companySector: z.string().min(2, "Company sector is required"),
+  companySector: z.string().min(1, "Company sector is required"),
   companyStage: z.string().min(2, "Company stage is required"),
   country: z.string().min(1, "Country is required"),
   city: z.string().min(1, "State is required"),
@@ -145,16 +145,16 @@ export default function CreateCompany() {
         quickSolution: data.quickSolution,
         webSite: data.webSite ?? undefined,
         foundationDate: data.foundationDate.toISOString().split("T")[0] ?? "",
-        companySector: data.companySector,
+        companySector: parseInt(data.companySector),
         companyStage: data.companyStage,
         country: data.country,
         city: data.city,
         about: data.about,
-        startInvestment: data.startInvestment,
+        startInvestment: parseInt(data.startInvestment),
         investorSlots: parseInt(data.investorSlots),
-        annualRevenue: data.annualRevenue,
-        investmentGoal: data.investmentGoal,
-        equity: data.equity,
+        annualRevenue: parseInt(data.annualRevenue),
+        investmentGoal: parseInt(data.investmentGoal),
+        equity: data.equity ? parseInt(data.equity) : undefined,
         companyFaq: data.companyFaq ?? [],
       });
 
@@ -401,7 +401,7 @@ export default function CreateCompany() {
                           </SelectTrigger>
                           <SelectContent>
                             {areas?.map((area) => (
-                              <SelectItem key={area.id} value={area.name}>
+                              <SelectItem key={area.id} value={area.id.toString()}>
                                 {area.name}
                               </SelectItem>
                             ))}

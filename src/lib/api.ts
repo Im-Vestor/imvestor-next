@@ -245,7 +245,16 @@ export const areasApi = {
 };
 
 export interface ProjectResponse {
-  id: number;
+  about: string;
+  companyName: string;
+  quickSolution: string | null;
+  cityState: string;
+  country: string;
+  slots: number;
+  banner: string;
+}
+
+type ProjectRequest = {
   banner: {
     name: string;
     type: string;
@@ -256,23 +265,21 @@ export interface ProjectResponse {
   quickSolution: string;
   webSite?: string;
   foundationDate: string;
-  companySector: string;
+  companySector: number;
   companyStage: string;
   country: string;
   city: string;
   about: string;
-  startInvestment: string;
+  startInvestment: number;
   investorSlots: number;
-  annualRevenue: string;
-  investmentGoal: string;
-  equity: string | undefined;
+  annualRevenue: number;
+  investmentGoal: number;
+  equity: number | undefined;
   companyFaq: {
     question: string;
     answer: string;
   }[];
 }
-
-type ProjectRequest = Omit<ProjectResponse, "id">;
 
 interface UploadFileRequest {
   idProject: number;
@@ -298,8 +305,10 @@ export const projectApi = {
     const response = await api.post<void>("/project/upload-file", data);
     return response.data;
   },
-  getProjects: async () => {
-    const response = await api.get<ProjectResponse[]>("/project");
+  getEntrepreneurProjects: async () => {
+    const response = await api.get<ProjectResponse[]>(
+      "/project/entrepreneur",
+    );
     return response.data;
   },
 };
