@@ -27,13 +27,13 @@ export default function Companies() {
     queryFn: areasApi.getAreasList,
   });
 
-  useQuery({
-    queryKey: ["companies"],
-    queryFn: async () => {
-      const response = await projectApi.getEntrepreneurProjects();
-      setCompanies(response);
-    },
-  });
+  // useQuery({
+  //   queryKey: ["companies"],
+  //   queryFn: async () => {
+  //     const response = await projectApi.getEntrepreneurProjects();
+  //     setCompanies(response);
+  //   },
+  // });
 
   // if user type is entrepreneur, go back to profile page
   useEffect(() => {
