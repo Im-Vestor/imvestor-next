@@ -100,8 +100,6 @@ export default function Profile() {
     enabled: userType === "ENTREPRENEUR",
   });
 
-  console.log(projects);
-
   const {
     data: profileData,
     isLoading,
@@ -158,43 +156,57 @@ export default function Profile() {
 
   // Update form values when profile data is loaded
   useEffect(() => {
-    if (profileData && userType === "ENTREPRENEUR") {
-      const data = profileData as EntrepreneurProfile;
-      entrepreneurForm.reset({
-        firstName: data.firstName ?? "",
-        lastName: data.lastName ?? "",
-        country: "",
-        city: "",
-        fiscalCode: data.fiscalCode ?? "",
-        mobileFone: data.mobileFone ?? "",
-        companyRole: data.companyRole ?? "",
-        companyName: data.companyName ?? "",
-        about: data.about ?? "",
-        photo: {
-          name: data.avatar ?? "",
-          type: "",
-          size: "",
-          base64: "",
-        },
-      });
-    } else if (profileData && userType === "INVESTOR") {
-      const data = profileData as InvestorProfile;
-      investorForm.reset({
-        firstName: data.firstName ?? "",
-        lastName: data.lastName ?? "",
-        fiscalCode: data.fiscalCode ?? "",
-        mobileFone: data.mobileFone ?? "",
-        country: "",
-        city: "",
-        about: data.about ?? "",
-        photo: {
-          name: data.avatar ?? "",
-          type: "",
-          size: "",
-          base64: "",
-        },
-      });
-    }
+    const initializeProfile = async () => {
+      if (profileData && userType === "ENTREPRENEUR") {
+        const data = profileData as EntrepreneurProfile;
+        if (data.country) {
+          await fetchStates(data.country);
+        }
+        entrepreneurForm.reset({
+          firstName: data.firstName ?? "",
+          lastName: data.lastName ?? "",
+          country:
+            countries.find((country) => country.name === data.country)?.name ??
+            "",
+          city: data.city ?? "",
+          fiscalCode: data.fiscalCode ?? "",
+          mobileFone: data.mobileFone ?? "",
+          companyRole: data.companyRole ?? "",
+          companyName: data.companyName ?? "",
+          about: data.about ?? "",
+          photo: {
+            name: data.avatar ?? "",
+            type: "",
+            size: "",
+            base64: "",
+          },
+        });
+      } else if (profileData && userType === "INVESTOR") {
+        const data = profileData as InvestorProfile;
+        if (data.country) {
+          await fetchStates(data.country);
+        }
+        investorForm.reset({
+          firstName: data.firstName ?? "",
+          lastName: data.lastName ?? "",
+          fiscalCode: data.fiscalCode ?? "",
+          mobileFone: data.mobileFone ?? "",
+          country:
+            countries.find((country) => country.name === data.country)?.name ??
+            "",
+          city: data.city ?? "",
+          about: data.about ?? "",
+          photo: {
+            name: data.avatar ?? "",
+            type: "",
+            size: "",
+            base64: "",
+          },
+        });
+      }
+    };
+
+    void initializeProfile();
   }, [entrepreneurForm, investorForm, profileData, userType]);
 
   const { mutate: updateEntrepreneur, isPending: isUpdatingEntrepreneur } =
@@ -706,7 +718,7 @@ export default function Profile() {
             )}
             <Button
               className="mt-4 md:w-1/3"
-                onClick={() => router.push("/create-company")}
+              onClick={() => router.push("/create-company")}
             >
               Add your Company
               <ArrowRight className="ml-2" />

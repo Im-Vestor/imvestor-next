@@ -71,7 +71,12 @@ export const Header = () => {
       className={`mb-12 flex ${accessToken ? "items-center justify-between" : "justify-center"} rounded-full border border-white/10 px-8 py-4`}
     >
       <div className="flex w-1/3 items-center gap-3">
-        <Image src="/logo/imvestor.png" alt="Imvestor" width={24} height={24} />
+        <Image
+          src="/logo/imvestor.png"
+          alt="Imvestor"
+          width={24}
+          height={24}
+        />
         <h1 className="text-xl font-bold text-white">Im-Vestor</h1>
       </div>
       {accessToken && userType === "INVESTOR" && (
@@ -143,7 +148,7 @@ export const Header = () => {
                   alt="Profile"
                   width={24}
                   height={24}
-                  className="rounded-full"
+                  className="h-8 w-8 rounded-full object-cover"
                 />
               ) : (
                 <User className="h-8 w-8" />
