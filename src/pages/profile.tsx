@@ -2,6 +2,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   ArrowRight,
+  CircleUserRound,
   ImageIcon,
   MapPin,
   Pencil,
@@ -712,7 +713,7 @@ export default function Profile() {
             {projects && projects.length > 0 && (
               <div className="mt-4">
                 {projects.map((project) => (
-                  <CompanyCard key={project.companyName} company={project} />
+                  <CompanyCard key={project.companyName} company={project} profileData={profileData} />
                 ))}
               </div>
             )}
@@ -996,20 +997,54 @@ export default function Profile() {
   );
 }
 
-function CompanyCard({ company }: { company: ProjectResponse }) {
+function CompanyCard({ company, profileData }: { company: ProjectResponse, profileData: EntrepreneurProfile | InvestorProfile }) {
   return (
-    <div className="rounded-lg border border-white/10 px-12 pb-20 pt-6">
-      <div className="flex items-center space-x-4">
-        <div className="flex h-24 w-24 items-center justify-center rounded-full bg-[#D1D5DB]">
-          <Image
-            src={company.banner}
-            alt="Company Banner"
-            width={96}
-            height={96}
-            className="h-24 w-24 rounded-full object-cover"
-          />
+        <div className="rounded-xl border-2 border-white/10 bg-[#1E202A] p-6">
+          <div className="flex gap-6 mb-4">
+            <div className="h-[72px] w-[72px] flex-shrink-0 overflow-hidden rounded-lg">
+              <Image
+                src={company.banner}
+                alt="Company Logo"
+                width={72}
+                height={72}
+                className="h-full w-full rounded-md object-cover"
+              />
+            </div>
+    
+            <div className="flex flex-col">
+              <div>
+                <div className="flex items-center gap-2">
+                  <h3 className="text-xl font-semibold">{company.companyName}</h3>
+                </div>
+                <span className="text-white/70">
+                  {company.cityState}, {company.country}
+                </span>
+                <p>{company.quickSolution}</p>
+              </div>
+            </div>
+          </div>
+          <hr className="my-6 border-white/10" />
+          <div className="flex items-center gap-2">
+            <Image
+              src={profileData.avatar ?? ""}
+              alt="Founder"
+              width={24}
+              height={24}
+              className="h-4 w-4 rounded-full object-cover text-white/50"
+            />
+            <p className="text-sm font-light">Founded by
+            <span className=" text-[#EFD687]"> {profileData.firstName}</span>
+            </p>
+            <div className="ml-auto flex space-x-2">
+              {[1, 2, 3, 4, 5].map((i) => (
+                <CircleUserRound
+                  key={i}
+                  color="#EFD687"
+                  className="h-4 w-4"
+                />
+              ))}
+            </div>
+          </div>
         </div>
-      </div>
-    </div>
-  );
+      );
 }

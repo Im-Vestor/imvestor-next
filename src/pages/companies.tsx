@@ -28,7 +28,7 @@ export default function Companies() {
   useQuery({
     queryKey: ["companies"],
     queryFn: async () => {
-      const response = await projectApi.getProjects();
+      const response = await projectApi.getEntrepreneurProjects();
       setCompanies(response);
     },
   });
