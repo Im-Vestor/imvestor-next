@@ -1,7 +1,8 @@
 import { useQuery } from "@tanstack/react-query";
 import { CircleUserRound, SearchIcon, UserRoundIcon } from "lucide-react";
 import Image from "next/image";
-import { useState } from "react";
+import { useRouter } from "next/router";
+import { useEffect, useState } from "react";
 import { Header } from "~/components/header";
 import { Checkbox } from "~/components/ui/checkbox";
 import { Input } from "~/components/ui/input";
@@ -18,6 +19,7 @@ const COMPANY_STAGES = [
 ];
 
 export default function Companies() {
+  const router = useRouter();
   const [companies, setCompanies] = useState<ProjectResponse[]>([]);
 
   const { data: areas } = useQuery({
@@ -32,6 +34,14 @@ export default function Companies() {
       setCompanies(response);
     },
   });
+
+  // if user type is entrepreneur, go back to profile page
+  useEffect(() => {
+    const userType = sessionStorage.getItem("type");
+    if (userType === "ENTREPRENEUR") {
+      void router.push("/profile");
+    }
+  }, [router]);
 
   return (
     <main className="mx-auto min-h-screen max-w-6xl p-8">
