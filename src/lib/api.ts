@@ -172,6 +172,7 @@ interface UpdateEntrepreneurProfileRequest {
   mobileFone: string;
   about?: string;
   photo?: PhotoUpload;
+  banner?: PhotoUpload;
 }
 
 interface UpdateInvestorProfileRequest {
@@ -183,6 +184,7 @@ interface UpdateInvestorProfileRequest {
   city: string;
   about?: string;
   photo?: PhotoUpload;
+  banner?: PhotoUpload;
 }
 
 interface UploadBannerRequest {

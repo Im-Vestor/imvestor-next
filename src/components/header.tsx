@@ -52,17 +52,11 @@ export const Header = () => {
     }
   }, [profileData]);
 
-  useEffect(() => {
-    const checkAuth = async () => {
-      if (!sessionStorage.getItem("accessToken")) {
-        await router.push("/login");
-      }
-    };
-    void checkAuth();
-  }, [router]);
-
   const handleSignOut = async () => {
     sessionStorage.clear();
+    setAccessToken("");
+    setUserType("");
+    setUserProfile(null);
     await router.push("/login");
   };
 
@@ -70,7 +64,7 @@ export const Header = () => {
     <div
       className={`mb-12 flex ${accessToken ? "items-center justify-between" : "justify-center"} rounded-full border border-white/10 px-8 py-4`}
     >
-      <div className="flex w-1/3 items-center gap-3">
+      <div className={`flex ${accessToken ? "w-1/3" : "w-full"} items-center gap-3`}>
         <Image
           src="/logo/imvestor.png"
           alt="Imvestor"
@@ -87,7 +81,7 @@ export const Header = () => {
             className={`${path === "/companies" ? "text-[#EFD687]" : ""}`}
             onClick={() => router.push("/companies")}
           >
-            Companies
+            Projects
           </Button>
           <Button
             variant="ghost"
@@ -96,6 +90,14 @@ export const Header = () => {
             onClick={() => router.push("/meetings")}
           >
             Meetings
+          </Button>
+          <Button
+            variant="ghost"
+            size="sm"
+            className={`${path === "/news" ? "text-[#EFD687]" : ""}`}
+            onClick={() => router.push("/news")}
+          >
+            News
           </Button>
           <Button
             variant="ghost"
@@ -129,6 +131,14 @@ export const Header = () => {
           <Button
             variant="ghost"
             size="sm"
+            className={`${path === "/news" ? "text-[#EFD687]" : ""}`}
+            onClick={() => router.push("/news")}
+          >
+            News
+          </Button>
+          <Button
+            variant="ghost"
+            size="sm"
             className={`${path === "/add-ons-store" ? "text-[#EFD687]" : ""}`}
             onClick={() => router.push("/add-ons-store")}
           >
@@ -137,6 +147,7 @@ export const Header = () => {
         </div>
       )}
 
+      {accessToken && (
       <div className="flex w-1/3 items-center justify-end gap-3">
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
@@ -169,8 +180,9 @@ export const Header = () => {
               Sign out
             </DropdownMenuItem>
           </DropdownMenuContent>
-        </DropdownMenu>
-      </div>
+          </DropdownMenu>
+        </div>
+      )}
     </div>
   );
 };

@@ -15,11 +15,13 @@ export default function Referral() {
   const { data: profile } = useQuery({
     queryKey: ["profile"],
     queryFn: () => authApi.getUserProfile(type),
+    enabled: !!type,
   });
 
   const { data: referral } = useQuery({
     queryKey: ["referral"],
     queryFn: () => referralApi.getReferralList(email ?? ""),
+    enabled: !!type && !!email,
   });
 
   useEffect(() => {

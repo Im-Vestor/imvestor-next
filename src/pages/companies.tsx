@@ -6,7 +6,7 @@ import { useEffect, useState } from "react";
 import { Header } from "~/components/header";
 import { Checkbox } from "~/components/ui/checkbox";
 import { Input } from "~/components/ui/input";
-import { areasApi, projectApi, type ProjectResponse } from "~/lib/api";
+import { areasApi, type ProjectResponse } from "~/lib/api";
 
 const COMPANY_STAGES = [
   "Pre-seed",
@@ -21,11 +21,14 @@ const COMPANY_STAGES = [
 export default function Companies() {
   const router = useRouter();
   const [companies, setCompanies] = useState<ProjectResponse[]>([]);
+  const [showAllAreas, setShowAllAreas] = useState(false);
 
   const { data: areas } = useQuery({
     queryKey: ["areas"],
     queryFn: areasApi.getAreasList,
   });
+
+  const visibleAreas = showAllAreas ? areas : areas?.slice(0, 3);
 
   // useQuery({
   //   queryKey: ["companies"],
@@ -50,8 +53,8 @@ export default function Companies() {
         <div className="flex rounded-xl border-2 border-white/10 bg-gradient-to-b from-[#20212B] to-[#242834] px-16 py-12">
           <div className="w-1/5">
             <p className="font-medium">Sector</p>
-            <div className="ml-2 mt-1.5 flex flex-col">
-              {areas?.map((area) => (
+            <div className="ml-2 mt-1.5 flex flex-col max-w-[150px]">
+              {visibleAreas?.map((area) => (
                 <div key={area.id} className="flex items-center gap-2">
                   <Checkbox id={area.id.toString()} />
                   <p key={area.id} className="text-sm">
@@ -59,20 +62,28 @@ export default function Companies() {
                   </p>
                 </div>
               ))}
+              {areas && areas.length > 3 && (
+                <button
+                  onClick={() => setShowAllAreas(!showAllAreas)}
+                  className="mt-1 text-sm text-start text-white/50 hover:text-white hover:underline"
+                >
+                  {showAllAreas ? (
+                    "Show less"
+                  ) : (
+                    `See more (${areas.length - 3})`
+                  )}
+                </button>
+              )}
             </div>
             <p className="mt-2 font-medium">Investor Slots</p>
             <div className="ml-2 mt-1.5 flex flex-col">
               <div className="flex items-center gap-2">
                 <Checkbox id="1" />
-                <p className="text-sm">1 - 10</p>
+                <p className="text-sm">1 - 5</p>
               </div>
               <div className="flex items-center gap-2">
                 <Checkbox id="2" />
-                <p className="text-sm">11 - 20</p>
-              </div>
-              <div className="flex items-center gap-2">
-                <Checkbox id="3" />
-                <p className="text-sm">20+</p>
+                <p className="text-sm">N/E</p>
               </div>
             </div>
             <p className="mt-2 font-medium">Stage</p>

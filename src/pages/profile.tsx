@@ -10,6 +10,7 @@ import {
   User,
 } from "lucide-react";
 import Image from "next/image";
+import Link from "next/link";
 import { useRouter } from "next/router";
 import { type ChangeEvent, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
@@ -64,6 +65,14 @@ const entrepreneurFormSchema = z.object({
       base64: z.string(),
     })
     .optional(),
+  banner: z
+    .object({
+      name: z.string(),
+      type: z.string(),
+      size: z.string(),
+      base64: z.string(),
+    })
+    .optional(),
 });
 
 const investorFormSchema = z.object({
@@ -82,6 +91,12 @@ const investorFormSchema = z.object({
       base64: z.string(),
     })
     .optional(),
+  banner: z.object({
+    name: z.string(),
+    type: z.string(),
+    size: z.string(),
+    base64: z.string(),
+  }),
 });
 
 export default function Profile() {
@@ -101,11 +116,7 @@ export default function Profile() {
     enabled: userType === "ENTREPRENEUR",
   });
 
-  const {
-    data: profileData,
-    isLoading,
-    refetch,
-  } = useQuery({
+  const { data: profileData, isLoading } = useQuery({
     queryKey: ["profile"],
     queryFn: async () => {
       return userType === "ENTREPRENEUR"
@@ -133,6 +144,12 @@ export default function Profile() {
         size: "",
         base64: "",
       },
+      banner: {
+        name: "",
+        type: "",
+        size: "",
+        base64: "",
+      },
     },
   });
 
@@ -147,6 +164,12 @@ export default function Profile() {
       city: "",
       about: "",
       photo: {
+        name: "",
+        type: "",
+        size: "",
+        base64: "",
+      },
+      banner: {
         name: "",
         type: "",
         size: "",
@@ -181,6 +204,12 @@ export default function Profile() {
             size: "",
             base64: "",
           },
+          banner: {
+            name: data.banner ?? "",
+            type: "",
+            size: "",
+            base64: "",
+          },
         });
       } else if (profileData && userType === "INVESTOR") {
         const data = profileData as InvestorProfile;
@@ -199,6 +228,12 @@ export default function Profile() {
           about: data.about ?? "",
           photo: {
             name: data.avatar ?? "",
+            type: "",
+            size: "",
+            base64: "",
+          },
+          banner: {
+            name: data.banner ?? "",
             type: "",
             size: "",
             base64: "",
@@ -267,42 +302,26 @@ export default function Profile() {
     const file = e.target.files?.[0];
     if (!file) return;
 
-    try {
-      setIsUploadingBanner(true);
+    setIsUploadingBanner(true);
 
-      // Convert file to base64
-      const reader = new FileReader();
-      reader.readAsDataURL(file);
-      reader.onload = async () => {
-        if (typeof reader.result !== "string") {
-          toast.error("Failed to process image");
-          return;
-        }
+    const base64 = await fileToBase64(file);
 
-        const base64 = reader.result.split(",")[1];
+    const bannerData = {
+      name: file.name,
+      type: file.type,
+      size: file.size.toString(),
+      base64: base64 as string,
+    };
 
-        if (!base64) {
-          toast.error("Failed to process image");
-          return;
-        }
-
-        const payload = {
-          name: file.name,
-          type: file.type,
-          size: file.size.toString(),
-          base64: base64,
-        };
-
-        await profileApi.uploadBanner(payload);
-        toast.success("Banner uploaded successfully!");
-        void refetch();
-      };
-    } catch (error) {
-      console.error("Error uploading banner:", error);
-      toast.error("Failed to upload banner");
-    } finally {
-      setIsUploadingBanner(false);
+    // Store the photo in the appropriate form state
+    if (userType === "ENTREPRENEUR") {
+      entrepreneurForm.setValue("banner", bannerData);
+    } else {
+      investorForm.setValue("banner", bannerData);
     }
+
+    toast.success("Banner ready to be saved");
+    setIsUploadingBanner(false);
   };
 
   const handlePhotoUpload = async (e: ChangeEvent<HTMLInputElement>) => {
@@ -327,8 +346,6 @@ export default function Profile() {
       investorForm.setValue("photo", photoData);
     }
 
-    console.log(photoData);
-
     toast.success("Photo ready to be saved");
     setIsUploadingPhoto(false);
   };
@@ -341,37 +358,50 @@ export default function Profile() {
     );
   }
 
-  const renderBannerUpload = (currentBanner: string | null) => (
-    <div className="relative mb-8 w-full">
-      <div className="h-48 w-full overflow-hidden rounded-t-lg bg-[#282B37]">
-        {currentBanner && (
-          <Image
-            src={currentBanner}
-            alt="Profile Banner"
-            layout="fill"
-            objectFit="cover"
-            className="transition-opacity duration-300 hover:opacity-75"
-          />
-        )}
+  const renderBannerUpload = (currentBanner: string | null) => {
+    const formBanner =
+      userType === "ENTREPRENEUR"
+        ? entrepreneurForm.getValues("banner")?.base64
+        : investorForm.getValues("banner")?.base64;
+
+    const bannerToShow = formBanner
+      ? `data:image/*;base64,${formBanner}`
+      : currentBanner;
+
+    console.log(bannerToShow);
+
+    return (
+      <div className="relative mb-8 w-full">
+        <div className="h-48 w-full overflow-hidden rounded-t-lg bg-[#282B37]">
+          {bannerToShow && (
+            <Image
+              src={bannerToShow}
+              alt="Profile Banner"
+              layout="fill"
+              objectFit="cover"
+              className="transition-opacity duration-300 hover:opacity-75"
+            />
+          )}
+        </div>
+        <div className="absolute right-4 top-4">
+          <label htmlFor="banner-upload" className="cursor-pointer">
+            <div className="flex items-center gap-2 rounded-md border border-white/10 bg-[#282A37] px-4 py-2 text-sm text-white hover:bg-[#282A37]/90">
+              <ImageIcon className="h-4 w-4" />
+              {isUploadingBanner ? "Uploading..." : "Change Banner"}
+            </div>
+            <input
+              id="banner-upload"
+              type="file"
+              accept="image/*"
+              className="hidden"
+              onChange={handleBannerUpload}
+              disabled={isUploadingBanner}
+            />
+          </label>
+        </div>
       </div>
-      <div className="absolute right-4 top-4">
-        <label htmlFor="banner-upload" className="cursor-pointer">
-          <div className="flex items-center gap-2 rounded-md border border-white/10 bg-[#282A37] px-4 py-2 text-sm text-white hover:bg-[#282A37]/90">
-            <ImageIcon className="h-4 w-4" />
-            {isUploadingBanner ? "Uploading..." : "Change Banner"}
-          </div>
-          <input
-            id="banner-upload"
-            type="file"
-            accept="image/*"
-            className="hidden"
-            onChange={handleBannerUpload}
-            disabled={isUploadingBanner}
-          />
-        </label>
-      </div>
-    </div>
-  );
+    );
+  };
 
   const renderPhotoUpload = (currentPhoto: string | null) => {
     const formPhoto =
@@ -1010,28 +1040,37 @@ function CompanyCard({
 }) {
   return (
     <div className="rounded-xl border-2 border-white/10 bg-[#1E202A] p-6">
-      <div className="mb-4 flex gap-6">
-        <div className="h-[72px] w-[72px] flex-shrink-0 overflow-hidden rounded-lg">
-          <Image
-            src={company.banner}
-            alt="Company Logo"
-            width={72}
-            height={72}
-            className="h-full w-full rounded-md object-cover"
-          />
-        </div>
+      <div className="flex justify-between">
+        <div className="flex gap-6">
+          <div className="h-[72px] w-[72px] flex-shrink-0 overflow-hidden rounded-lg">
+            <Image
+              src={company.banner}
+              alt="Company Logo"
+              width={72}
+              height={72}
+              className="h-full w-full rounded-md object-cover"
+            />
+          </div>
 
-        <div className="flex flex-col">
-          <div>
-            <div className="flex items-center gap-2">
-              <h3 className="text-xl font-semibold">{company.companyName}</h3>
+          <div className="flex flex-col">
+            <div>
+              <div className="flex items-center gap-2">
+                <h3 className="text-xl font-semibold">{company.companyName}</h3>
+              </div>
+              <span className="text-white/70">
+                {company.cityState}, {company.country}
+              </span>
+              <p>{company.quickSolution}</p>
             </div>
-            <span className="text-white/70">
-              {company.cityState}, {company.country}
-            </span>
-            <p>{company.quickSolution}</p>
           </div>
         </div>
+
+        {/* <Link href={`/companies/${company.id}`}>
+        <Button variant="outline">
+          <Pencil className="h-4 w-4" />
+          Edit
+        </Button>
+        </Link> */}
       </div>
       <hr className="my-6 border-white/10" />
       <div className="flex items-center gap-2">
@@ -1047,9 +1086,16 @@ function CompanyCard({
           <span className="text-[#EFD687]"> {profileData.firstName}</span>
         </p>
         <div className="ml-auto flex space-x-2">
-          {[1, 2, 3, 4, 5].map((i) => (
-            <CircleUserRound key={i} color="#EFD687" className="h-4 w-4" />
-          ))}
+          {Array.from({ length: company.slots > 5 ? 5 : company.slots }).map(
+            (_, i) => (
+              <CircleUserRound key={i} color="#EFD687" className="h-4 w-4" />
+            ),
+          )}
+          {company.slots > 5 && (
+            <p className="text-sm font-light text-white/50">
+              (+{company.slots - 5})
+            </p>
+          )}
         </div>
       </div>
     </div>
