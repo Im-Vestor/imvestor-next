@@ -81,7 +81,7 @@ export const Header = () => {
             className={`${path === "/companies" ? "text-[#EFD687]" : ""}`}
             onClick={() => router.push("/companies")}
           >
-            Projects
+            Find Projects
           </Button>
           <Button
             variant="ghost"
